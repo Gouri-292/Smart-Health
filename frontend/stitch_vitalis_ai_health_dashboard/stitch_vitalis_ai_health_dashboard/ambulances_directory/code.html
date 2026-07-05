@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Ambulances Directory - HealthGov Intelligence</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+
+    <!-- Socket.IO Client -->
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed-dim": "#a9c7ff",
+                        "surface": "#f7f9fb",
+                        "secondary-fixed": "#90f4e8",
+                        "on-tertiary-fixed-variant": "#00504d",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-secondary-fixed": "#00201d",
+                        "surface-bright": "#f7f9fb",
+                        "primary-fixed": "#d6e3ff",
+                        "on-error": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#00201f",
+                        "surface-container-high": "#e6e8ea",
+                        "on-background": "#191c1e",
+                        "on-surface-variant": "#424752",
+                        "outline": "#727783",
+                        "surface-variant": "#e0e3e5",
+                        "tertiary": "#00514f",
+                        "tertiary-fixed": "#74f7f1",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-surface": "#191c1e",
+                        "on-primary-fixed-variant": "#00468c",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary": "#ffffff",
+                        "outline-variant": "#c2c6d4",
+                        "surface-dim": "#d8dadc",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed": "#001b3d",
+                        "surface-container": "#eceef0",
+                        "on-tertiary-container": "#6beee9",
+                        "on-secondary-fixed-variant": "#00504a",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#73d7cc",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#a9c7ff",
+                        "tertiary-container": "#006b68",
+                        "background": "#f7f9fb",
+                        "inverse-surface": "#2d3133",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#53dad5",
+                        "secondary-container": "#90f4e8",
+                        "surface-tint": "#005db6",
+                        "on-error-container": "#93000a",
+                        "secondary": "#006a63",
+                        "on-primary-container": "#c8daff",
+                        "primary-container": "#005eb8",
+                        "primary": "#00478d",
+                        "on-secondary-container": "#007169"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "xl": "32px",
+                        "base": "4px",
+                        "container-max": "1440px",
+                        "sm": "8px",
+                        "lg": "24px",
+                        "sidebar-width": "280px",
+                        "md": "16px"
+                    },
+                    "fontFamily": {
+                        "title-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "mono-label": ["JetBrains Mono"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "title-lg": ["20px", { "lineHeight": "28px", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "mono-label": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #c2c6d4;
+            border-radius: 9999px;
+        }
+
+        #ambulanceMap {
+            height: 400px;
+            width: 100%;
+            border-radius: 0.75rem;
+            z-index: 10;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 11px;
+            top: 24px;
+            bottom: -24px;
+            width: 2px;
+            background: #e0e3e5;
+        }
+        
+        .timeline-item:last-child::before {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+    <!-- SideNavBar -->
+    <aside class="fixed left-0 top-0 h-screen w-sidebar-width flex flex-col z-40 bg-primary shadow-md hidden md:flex flex-col">
+        <div class="p-lg flex items-center gap-sm">
+            <div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center overflow-hidden">
+                <img alt="Government Seal" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBp9uQBZjq4waE9x0qfd4Vqn9JVuYRD70UkyX8aFHHndQsbXukn_nNGV4jqrxmI-jUjBrMwZD2g64XfW6eWYEi_ll5jaUGaLlNdLRL_lGKorwecWTeo1aqmkj8lI9xbjMFxVjJ5BlCJelxg02PXFDKErFvBivNPK5lyH8x57xQmSQxu-l65uBxPnKZMglCT_ywZDlc4GY-JibuV-Kv8jV5YYs2W00ZwAieinqdyi9PDqnnE5qY5h2wCh4g6QNVTz4KugGhADTxNug" />
+            </div>
+            <div>
+                <h1 class="font-headline-md text-headline-md font-bold text-on-primary">District Admin</h1>
+                <p class="font-label-md text-label-md text-primary-fixed-dim">Public Health Division</p>
+            </div>
+        </div>
+        <nav class="flex-1 mt-md px-sm space-y-1">
+            <a class="text-primary-fixed-dim flex items-center px-md py-sm hover:bg-primary-container hover:text-on-primary-container rounded-r-lg transition-all font-label-md text-label-md active:translate-x-1 duration-200" href="../district_dashboard/code.html">
+                <span class="material-symbols-outlined mr-md">dashboard</span> Dashboard
+            </a>
+            <a class="text-primary-fixed-dim flex items-center px-md py-sm hover:bg-primary-container hover:text-on-primary-container rounded-r-lg transition-all font-label-md text-label-md active:translate-x-1 duration-200" href="../city_phc_details/code.html">
+                <span class="material-symbols-outlined mr-md">domain</span> Health Centres
+            </a>
+            <a class="text-primary-fixed-dim flex items-center px-md py-sm hover:bg-primary-container hover:text-on-primary-container rounded-r-lg transition-all font-label-md text-label-md active:translate-x-1 duration-200" href="../doctors_directory/code.html">
+                <span class="material-symbols-outlined mr-md">medical_services</span> Medical Staff
+            </a>
+            <a class="text-primary-fixed-dim flex items-center px-md py-sm hover:bg-primary-container hover:text-on-primary-container rounded-r-lg transition-all font-label-md text-label-md active:translate-x-1 duration-200" href="../medicine_inventory_ai_forecast/code.html">
+                <span class="material-symbols-outlined mr-md">inventory_2</span> Inventory
+            </a>
+            <a class="text-primary-fixed-dim flex items-center px-md py-sm hover:bg-primary-container hover:text-on-primary-container rounded-r-lg transition-all font-label-md text-label-md active:translate-x-1 duration-200" href="../ai_health_predictions/code.html">
+                <span class="material-symbols-outlined mr-md">psychology</span> AI Predictions
+            </a>
+            <a class="bg-secondary-container text-on-secondary-container border-l-4 border-secondary-fixed font-bold flex items-center px-md py-sm rounded-r-lg font-label-md text-label-md active:translate-x-1 duration-200" href="code.html">
+                <span class="material-symbols-outlined mr-md">ambulance</span> Ambulances
+            </a>
+        </nav>
+        <div class="p-sm mt-auto border-t border-primary-container">
+            <a class="text-primary-fixed-dim flex items-center px-md py-sm hover:bg-primary-container hover:text-on-primary-container rounded-lg transition-all font-label-md text-label-md active:translate-x-1 duration-200" href="#">
+                <span class="material-symbols-outlined mr-md">description</span> Reports
+            </a>
+            <a class="text-primary-fixed-dim flex items-center px-md py-sm hover:bg-primary-container hover:text-on-primary-container rounded-lg transition-all font-label-md text-label-md active:translate-x-1 duration-200" href="../login_healthgov_intelligence/code.html">
+                <span class="material-symbols-outlined mr-md">logout</span> Logout
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <main class="flex-1 flex flex-col md:ml-[280px] w-full min-h-screen">
+        <!-- TopNavBar -->
+        <header class="bg-surface text-primary font-body-md text-body-md docked full-width top-0 sticky z-50 shadow-sm border-b border-outline-variant">
+            <div class="flex justify-between items-center w-full px-lg h-16 max-w-container-max mx-auto">
+                <div class="flex items-center gap-md">
+                    <button class="md:hidden text-primary p-2 active:scale-95 duration-150 rounded-full hover:bg-surface-container-high transition-colors">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                    <div class="font-title-lg text-title-lg font-bold text-primary">HealthGov Intelligence</div>
+                </div>
+                <div class="flex items-center gap-lg">
+                    <div class="hidden sm:flex items-center bg-surface-container rounded-full px-4 py-2 border border-outline-variant focus-within:border-primary transition-colors">
+                        <span class="material-symbols-outlined text-outline mr-2 text-sm">search</span>
+                        <input class="bg-transparent border-none focus:ring-0 text-sm w-64 text-on-surface placeholder:text-outline p-0" placeholder="Search ambulances..." type="text" />
+                    </div>
+                    <div class="flex items-center gap-xs">
+                        <button class="p-2 text-primary hover:bg-surface-container-high rounded-full transition-colors active:scale-95 duration-150">
+                            <span class="material-symbols-outlined flex items-center gap-2">radio_button_checked <span class="text-sm font-bold">Live Tracking ON</span></span>
+                        </button>
+                        <div class="w-8 h-8 rounded-full ml-sm border border-outline-variant overflow-hidden cursor-pointer active:scale-95 duration-150">
+                            <img alt="Administrator Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSYiJbnCJ504lDls6erWt1D0O2gCiwPtTIbgMRSH8Uywkpk-R_Mam4qJ5cc0brq1GqTkTJj20NRY7Z1QFQFeJ0b7aP7-1yJuHXmKDWsVo0si1KSWi5_qCL2A2Qqw5D3WPYHU5EamnJELiUcped_Z26__5zGkM60en4TnFDvIwroRH_QJPLQGTfQktJZvjXVANoMO92WkEHNM2j3t07uBXsKp0zm2Mf8lA_3ucSHajSnVAdqINOHVhyuqjOrV8PndhpfjS3o_FNbg" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Content Canvas -->
+        <div class="flex-1 p-md md:p-lg max-w-container-max mx-auto w-full space-y-lg overflow-y-auto">
+            
+            <!-- Page Header & Metrics -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-md">
+                <div>
+                    <h2 class="font-headline-lg text-headline-lg text-on-surface">Ambulance Fleet Live Tracker</h2>
+                    <p class="font-body-md text-body-md text-on-surface-variant mt-1">Real-time GPS tracking and emergency trip timeline.</p>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+                <div class="bg-surface-container-lowest p-md rounded-xl shadow-sm border border-outline-variant flex items-center gap-md border-l-4 border-l-primary">
+                    <div class="bg-primary-container text-on-primary-container p-sm rounded-lg">
+                        <span class="material-symbols-outlined text-[32px]">airport_shuttle</span>
+                    </div>
+                    <div>
+                        <p class="text-on-surface-variant text-sm font-bold uppercase tracking-wide">Total Active Fleet</p>
+                        <p id="total-count" class="text-on-surface text-3xl font-display-lg font-bold">0</p>
+                    </div>
+                </div>
+                
+                <div class="bg-surface-container-lowest p-md rounded-xl shadow-sm border border-outline-variant flex items-center gap-md border-l-4 border-l-[#10B981]">
+                    <div class="bg-[#D1FAE5] text-[#10B981] p-sm rounded-lg">
+                        <span class="material-symbols-outlined text-[32px]">check_circle</span>
+                    </div>
+                    <div>
+                        <p class="text-on-surface-variant text-sm font-bold uppercase tracking-wide">Available</p>
+                        <p id="available-count" class="text-on-surface text-3xl font-display-lg font-bold">0</p>
+                    </div>
+                </div>
+
+                <div class="bg-surface-container-lowest p-md rounded-xl shadow-sm border border-outline-variant flex items-center gap-md border-l-4 border-l-[#EF4444]">
+                    <div class="bg-[#FEE2E2] text-[#EF4444] p-sm rounded-lg">
+                        <span class="material-symbols-outlined text-[32px]">emergency</span>
+                    </div>
+                    <div>
+                        <p class="text-on-surface-variant text-sm font-bold uppercase tracking-wide">Busy / En Route</p>
+                        <p id="busy-count" class="text-on-surface text-3xl font-display-lg font-bold">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Map and Timeline Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-lg">
+                
+                <!-- Live Map -->
+                <div class="lg:col-span-2 bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant p-4 flex flex-col">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-title-lg text-title-lg text-on-surface font-semibold flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">map</span> Indore Live Map
+                        </h3>
+                        <span class="flex items-center gap-2 text-xs font-bold bg-[#D1FAE5] text-[#10B981] px-2 py-1 rounded">
+                            <span class="w-2 h-2 rounded-full bg-[#10B981] animate-ping"></span> Live Socket.IO
+                        </span>
+                    </div>
+                    <div id="ambulanceMap" class="shadow-inner border border-outline-variant"></div>
+                </div>
+
+                <!-- Emergency Timeline -->
+                <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant p-4 flex flex-col">
+                    <h3 class="font-title-lg text-title-lg text-on-surface font-semibold flex items-center gap-2 mb-6">
+                        <span class="material-symbols-outlined text-primary">history</span> Emergency Trips
+                    </h3>
+                    <div id="timeline-container" class="flex-1 overflow-y-auto space-y-6 relative pl-2 pb-4">
+                        <!-- Timeline items loaded dynamically -->
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <script>
+        let map;
+        let markers = {};
+        
+        // Custom icons
+        const availableIcon = L.divIcon({
+            html: '<div style="background-color: #10B981; color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);"><span class="material-symbols-outlined" style="font-size: 18px;">airport_shuttle</span></div>',
+            className: 'custom-div-icon',
+            iconSize: [30, 30],
+            iconAnchor: [15, 15]
+        });
+
+        const busyIcon = L.divIcon({
+            html: '<div style="background-color: #EF4444; color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 0 10px rgba(239, 68, 68, 0.8);"><span class="material-symbols-outlined" style="font-size: 18px;">airport_shuttle</span></div>',
+            className: 'custom-div-icon',
+            iconSize: [30, 30],
+            iconAnchor: [15, 15]
+        });
+
+        const maintIcon = L.divIcon({
+            html: '<div style="background-color: #727783; color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);"><span class="material-symbols-outlined" style="font-size: 18px;">build</span></div>',
+            className: 'custom-div-icon',
+            iconSize: [30, 30],
+            iconAnchor: [15, 15]
+        });
+
+        function initMap() {
+            // Center on Indore
+            map = L.map('ambulanceMap').setView([22.7196, 75.8577], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
+        }
+
+        function getIcon(status) {
+            if (status === 'Busy') return busyIcon;
+            if (status === 'Available') return availableIcon;
+            return maintIcon;
+        }
+
+        function updateMetrics(ambulances) {
+            const active = ambulances.filter(a => a.status !== 'Maintenance').length;
+            const available = ambulances.filter(a => a.status === 'Available').length;
+            const busy = ambulances.filter(a => a.status === 'Busy').length;
+
+            document.getElementById('total-count').textContent = active;
+            document.getElementById('available-count').textContent = available;
+            document.getElementById('busy-count').textContent = busy;
+        }
+
+        async function loadAmbulances() {
+            try {
+                const res = await fetch('http://localhost:3000/api/ambulances');
+                const ambulances = await res.json();
+                
+                updateMetrics(ambulances);
+
+                ambulances.forEach(amb => {
+                    const marker = L.marker([amb.latitude, amb.longitude], { icon: getIcon(amb.status) })
+                        .bindPopup(`<b>${amb.vehicle_number}</b><br>Status: ${amb.status}<br>Driver: ${amb.driver_name}`)
+                        .addTo(map);
+                    
+                    markers[amb.id] = { marker, status: amb.status };
+                });
+            } catch (error) {
+                console.error("Error loading ambulances:", error);
+            }
+        }
+
+        async function loadTrips() {
+            try {
+                const res = await fetch('http://localhost:3000/api/ambulances/trips');
+                const trips = await res.json();
+                
+                const container = document.getElementById('timeline-container');
+                container.innerHTML = '';
+                
+                trips.forEach(trip => {
+                    const isCompleted = trip.status === 'Completed';
+                    const iconColor = isCompleted ? 'text-[#10B981] bg-[#D1FAE5]' : 'text-[#EF4444] bg-[#FEE2E2]';
+                    const icon = isCompleted ? 'check' : 'emergency';
+                    const timeStr = new Date(trip.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+                    const html = `
+                        <div class="relative timeline-item flex gap-4 items-start">
+                            <div class="z-10 w-6 h-6 rounded-full flex items-center justify-center border-2 border-white shadow-sm ${iconColor} flex-shrink-0">
+                                <span class="material-symbols-outlined text-[14px]">${icon}</span>
+                            </div>
+                            <div class="flex-1 bg-surface-container p-3 rounded-lg border border-outline-variant">
+                                <div class="flex justify-between items-start mb-1">
+                                    <span class="font-bold text-on-surface text-sm">${trip.vehicle_number}</span>
+                                    <span class="text-xs text-on-surface-variant font-mono">${timeStr}</span>
+                                </div>
+                                <p class="text-xs text-on-surface-variant mb-2">Patient: <b>${trip.patient_name}</b></p>
+                                <div class="text-xs flex items-center gap-1 text-on-surface">
+                                    <span class="material-symbols-outlined text-[14px] text-primary">my_location</span> ${trip.pickup_location}
+                                </div>
+                                <div class="text-xs flex items-center gap-1 mt-1 text-on-surface">
+                                    <span class="material-symbols-outlined text-[14px] text-[#10B981]">flag</span> ${trip.dropoff_location}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += html;
+                });
+            } catch (error) {
+                console.error("Error loading trips:", error);
+            }
+        }
+
+        function setupSocket() {
+            const socket = io('http://localhost:3000');
+            
+            socket.on('ambulance_location_update', (updates) => {
+                updates.forEach(update => {
+                    if (markers[update.id]) {
+                        // Smoothly set new latlng
+                        markers[update.id].marker.setLatLng([update.latitude, update.longitude]);
+                    }
+                });
+            });
+        }
+
+        // Initialize
+        initMap();
+        loadAmbulances();
+        loadTrips();
+        setupSocket();
+    </script>
+</body>
+
+</html>

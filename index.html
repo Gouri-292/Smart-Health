@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vitalis AI - HealthGov Portal Launcher</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .glass-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(144, 254, 232, 0.4);
+            box-shadow: 0 20px 40px -15px rgba(0, 71, 141, 0.3);
+        }
+        .glow-effect {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(144, 244, 232, 0.15) 0%, transparent 70%);
+            top: -50px;
+            right: -50px;
+            pointer-events: none;
+            transition: all 0.5s ease;
+        }
+        .glass-card:hover .glow-effect {
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(144, 244, 232, 0.25) 0%, transparent 70%);
+        }
+    </style>
+</head>
+<body class="min-h-full flex flex-col font-sans relative overflow-x-hidden selection:bg-teal-500 selection:text-slate-950">
+    
+    <!-- Background Accents -->
+    <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-teal-900/20 blur-[150px] pointer-events-none"></div>
+    <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-blue-900/20 blur-[150px] pointer-events-none"></div>
+
+    <!-- Header -->
+    <header class="w-full max-w-7xl mx-auto px-6 py-8 flex justify-between items-center z-10">
+        <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-teal-400 text-4xl" style="font-variation-settings: 'FILL' 1;">health_and_safety</span>
+            <div>
+                <span class="text-xl font-bold tracking-tight bg-gradient-to-r from-teal-400 via-emerald-400 to-blue-500 bg-clip-text text-transparent">VITALIS AI</span>
+                <span class="block text-xs font-mono text-slate-500 uppercase tracking-widest">HealthGov Suite</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-slate-900 border border-slate-800 text-teal-400">
+                <span class="h-2 w-2 rounded-full bg-teal-400 animate-pulse"></span>
+                Local Server Host
+            </span>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 w-full max-w-7xl mx-auto px-6 py-12 flex flex-col items-center justify-center z-10">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/20 text-teal-400 text-sm font-medium mb-6">
+                <span class="material-symbols-outlined text-base">auto_awesome</span>
+                AI-Driven Public Health Telemetry
+            </div>
+            <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight mb-6">
+                Welcome to <span class="bg-gradient-to-r from-teal-300 via-cyan-400 to-blue-400 bg-clip-text text-transparent">HealthGov Intelligence</span>
+            </h1>
+            <p class="text-lg md:text-xl text-slate-400 font-light leading-relaxed">
+                A unified, state-of-the-art administrative portal linking district health overview, predictive analytics, medical inventory forecasts, and patient queues.
+            </p>
+            <div class="mt-8 flex flex-wrap justify-center gap-4">
+                <a href="frontend/stitch_vitalis_ai_health_dashboard/stitch_vitalis_ai_health_dashboard/login_healthgov_intelligence/code.html" 
+                   class="inline-flex items-center gap-2 bg-gradient-to-r from-teal-400 to-cyan-500 hover:from-teal-300 hover:to-cyan-400 text-slate-950 font-semibold px-8 py-4 rounded-xl shadow-lg shadow-teal-500/20 hover:shadow-teal-500/30 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                    Start Secure App Flow
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Section Title -->
+        <div class="w-full flex items-center justify-between border-b border-slate-800 pb-4 mb-10">
+            <h2 class="text-2xl font-bold tracking-tight">Explore Dashboard Screens</h2>
+            <span class="text-sm font-mono text-slate-500">5 Screens Connected</span>
+        </div>
+
+        <!-- Bento Grid / Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
+            
+            <!-- Card 1: Login -->
+            <a href="frontend/stitch_vitalis_ai_health_dashboard/stitch_vitalis_ai_health_dashboard/login_healthgov_intelligence/code.html" class="glass-card rounded-2xl overflow-hidden group flex flex-col h-full relative">
+                <div class="glow-effect"></div>
+                <div class="aspect-video w-full overflow-hidden bg-slate-900 border-b border-slate-800/80 relative">
+                    <img src="frontend/stitch_vitalis_ai_health_dashboard/stitch_vitalis_ai_health_dashboard/login_healthgov_intelligence/screen.png" 
+                         alt="Login Portal Preview" 
+                         class="w-full h-full object-cover object-top opacity-60 group-hover:opacity-85 transition-opacity duration-300">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
+                </div>
+                <div class="p-6 flex-1 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono text-teal-400 uppercase tracking-wider">Gatekeeper</span>
+                            <span class="flex items-center gap-1 text-xs text-slate-400">
+                                <span class="material-symbols-outlined text-sm">lock</span> Secure
+                            </span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-100 group-hover:text-teal-400 transition-colors mb-2">1. Secure Admin Login</h3>
+                        <p class="text-slate-400 text-sm font-light">End-to-end encrypted administrative authentication portal utilizing Tailwind CSS forms.</p>
+                    </div>
+                    <div class="mt-6 flex items-center justify-between text-slate-300 font-medium text-sm group-hover:text-teal-300 transition-colors">
+                        <span>Launch Login</span>
+                        <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">chevron_right</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Card 2: District Dashboard -->
+            <a href="frontend/stitch_vitalis_ai_health_dashboard/stitch_vitalis_ai_health_dashboard/district_dashboard/code.html" class="glass-card rounded-2xl overflow-hidden group flex flex-col h-full relative">
+                <div class="glow-effect"></div>
+                <div class="aspect-video w-full overflow-hidden bg-slate-900 border-b border-slate-800/80 relative">
+                    <img src="frontend/stitch_vitalis_ai_health_dashboard/stitch_vitalis_ai_health_dashboard/district_dashboard/screen.png" 
+                         alt="District Dashboard Preview" 
+                         class="w-full h-full object-cover object-top opacity-60 group-hover:opacity-85 transition-opacity duration-300">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
+                </div>
+                <div class="p-6 flex-1 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono text-teal-400 uppercase tracking-wider">Control Panel</span>
+                            <span class="flex items-center gap-1 text-xs text-emerald-400">
+                                <span class="material-symbols-outlined text-sm">monitoring</span> Telemetry
+                            </span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-100 group-hover:text-teal-400 transition-colors mb-2">2. District Telemetry</h3>
+                        <p class="text-slate-400 text-sm font-light">Real-time health center analytics map, medical alerts feed, and regional telemetry grid.</p>
+                    </div>
+                    <div class="mt-6 flex items-center justify-between text-slate-300 font-medium text-sm group-hover:text-teal-300 transition-colors">
+                        <span>Open Dashboard</span>
+                        <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">chevron_right</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Card 3: AI predictions -->
+            <a href="frontend/stitch_vitalis_ai_health_dashboard/stitch_vitalis_ai_health_dashboard/ai_health_predictions/code.html" class="glass-card rounded-2xl overflow-hidden group flex flex-col h-full relative">
+                <div class="glow-effect"></div>
+                <div class="aspect-video w-full overflow-hidden bg-slate-900 border-b border-slate-800/80 relative">
+                    <img src="frontend/stitch_vitalis_ai_health_dashboard/stitch_vitalis_ai_health_dashboard/ai_health_predictions/screen.png" 
+                         alt="AI Health Predictions Preview" 
+                         class="w-full h-full object-cover object-top opacity-60 group-hover:opacity-85 transition-opacity duration-300">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
+                </div>
+                <div class="p-6 flex-1 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono text-teal-400 uppercase tracking-wider">Predictive Engine</span>
+                            <span class="flex items-center gap-1 text-xs text-amber-400">
+                                <span class="material-symbols-outlined text-sm">psychology</span> AI-Driven
+                            </span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-100 group-hover:text-teal-400 transition-colors mb-2">3. Health Predictions</h3>
+                        <p class="text-slate-400 text-sm font-light">Outbreak predictions, patient surge load calculations, and automated prescriptive action items.</p>
+                    </div>
+                    <div class="mt-6 flex items-center justify-between text-slate-300 font-medium text-sm group-hover:text-teal-300 transition-colors">
+                        <span>Analyze Predictions</span>
+                        <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">chevron_right</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Card 4: City PHC details -->
+            <a href="frontend/stitch_vitalis_ai_health_dashboard/stitch_vitalis_ai_health_dashboard/city_phc_details/code.html" class="glass-card rounded-2xl overflow-hidden group flex flex-col h-full relative">
+                <div class="glow-effect"></div>
+                <div class="aspect-video w-full overflow-hidden bg-slate-900 border-b border-slate-800/80 relative">
+                    <img src="frontend/stitch_vitalis_ai_health_dashboard/stitch_vitalis_ai_health_dashboard/city_phc_details/screen.png" 
+                         alt="City PHC Details Preview" 
+                         class="w-full h-full object-cover object-top opacity-60 group-hover:opacity-85 transition-opacity duration-300">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
+                </div>
+                <div class="p-6 flex-1 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono text-teal-400 uppercase tracking-wider">Facility Level</span>
+                            <span class="flex items-center gap-1 text-xs text-blue-400">
+                                <span class="material-symbols-outlined text-sm">home_health</span> Operations
+                            </span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-100 group-hover:text-teal-400 transition-colors mb-2">4. City PHC Center Details</h3>
+                        <p class="text-slate-400 text-sm font-light">Local duty rosters, live consultation token queues, active staff details, and bed status.</p>
+                    </div>
+                    <div class="mt-6 flex items-center justify-between text-slate-300 font-medium text-sm group-hover:text-teal-300 transition-colors">
+                        <span>Inspect Facility</span>
+                        <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">chevron_right</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Card 5: Inventory Forecast -->
+            <a href="frontend/stitch_vitalis_ai_health_dashboard/stitch_vitalis_ai_health_dashboard/medicine_inventory_ai_forecast/code.html" class="glass-card rounded-2xl overflow-hidden group flex flex-col h-full relative">
+                <div class="glow-effect"></div>
+                <div class="aspect-video w-full overflow-hidden bg-slate-900 border-b border-slate-800/80 relative">
+                    <img src="frontend/stitch_vitalis_ai_health_dashboard/stitch_vitalis_ai_health_dashboard/medicine_inventory_ai_forecast/screen.png" 
+                         alt="Inventory Forecast Preview" 
+                         class="w-full h-full object-cover object-top opacity-60 group-hover:opacity-85 transition-opacity duration-300">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
+                </div>
+                <div class="p-6 flex-1 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono text-teal-400 uppercase tracking-wider">Supply Chain</span>
+                            <span class="flex items-center gap-1 text-xs text-rose-400">
+                                <span class="material-symbols-outlined text-sm">inventory_2</span> Forecast
+                            </span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-100 group-hover:text-teal-400 transition-colors mb-2">5. Medicine Stock & Forecast</h3>
+                        <p class="text-slate-400 text-sm font-light">Stock levels tracking, critical stock alerts, batch expiry analysis, and AI-suggested transfers.</p>
+                    </div>
+                    <div class="mt-6 flex items-center justify-between text-slate-300 font-medium text-sm group-hover:text-teal-300 transition-colors">
+                        <span>Check Stock</span>
+                        <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">chevron_right</span>
+                    </div>
+                </div>
+            </a>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full max-w-7xl mx-auto px-6 py-8 mt-12 border-t border-slate-900/60 z-10 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-mono text-slate-500">
+        <p>&copy; 2026 HealthGov Intelligence. AI-Telemetry Suite v2.4.1.</p>
+        <p>Operational Status: <span class="text-teal-400 font-semibold">Healthy</span></p>
+    </footer>
+</body>
+</html>

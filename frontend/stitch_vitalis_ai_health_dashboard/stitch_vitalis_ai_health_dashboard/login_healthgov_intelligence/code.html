@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HealthGov Intelligence - Secure Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed-dim": "#a9c7ff",
+                        "surface": "#f7f9fb",
+                        "secondary-fixed": "#90f4e8",
+                        "on-tertiary-fixed-variant": "#00504d",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-secondary-fixed": "#00201d",
+                        "surface-bright": "#f7f9fb",
+                        "primary-fixed": "#d6e3ff",
+                        "on-error": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#00201f",
+                        "surface-container-high": "#e6e8ea",
+                        "on-background": "#191c1e",
+                        "on-surface-variant": "#424752",
+                        "outline": "#727783",
+                        "surface-variant": "#e0e3e5",
+                        "tertiary": "#00514f",
+                        "tertiary-fixed": "#74f7f1",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-surface": "#191c1e",
+                        "on-primary-fixed-variant": "#00468c",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary": "#ffffff",
+                        "outline-variant": "#c2c6d4",
+                        "surface-dim": "#d8dadc",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed": "#001b3d",
+                        "surface-container": "#eceef0",
+                        "on-tertiary-container": "#6beee9",
+                        "on-secondary-fixed-variant": "#00504a",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#73d7cc",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#a9c7ff",
+                        "tertiary-container": "#006b68",
+                        "background": "#f7f9fb",
+                        "inverse-surface": "#2d3133",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#53dad5",
+                        "secondary-container": "#90f4e8",
+                        "surface-tint": "#005db6",
+                        "on-error-container": "#93000a",
+                        "secondary": "#006a63",
+                        "on-primary-container": "#c8daff",
+                        "primary-container": "#005eb8",
+                        "primary": "#00478d",
+                        "on-secondary-container": "#007169"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "xl": "32px",
+                        "base": "4px",
+                        "container-max": "1440px",
+                        "sm": "8px",
+                        "lg": "24px",
+                        "sidebar-width": "280px",
+                        "md": "16px"
+                    },
+                    "fontFamily": {
+                        "title-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "mono-label": ["JetBrains Mono"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "title-lg": ["20px", { "lineHeight": "28px", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "mono-label": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1.5px solid transparent;
+            background-clip: padding-box;
+            position: relative;
+        }
+        .glass-panel::before {
+            content: '';
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            z-index: -1;
+            margin: -1.5px;
+            border-radius: inherit;
+            background: linear-gradient(to bottom right, #00478d, #90f4e8);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface h-full flex antialiased">
+<!-- Main Container: Split Layout -->
+<div class="flex flex-col lg:flex-row w-full min-h-screen">
+<!-- Left Side: AI Healthcare Illustration -->
+<div class="hidden lg:flex lg:w-1/2 relative bg-primary-container items-center justify-center overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-overlay" style="background-image: url('https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg');"></div>
+<!-- Decorative Overlay Elements to enhance the AI feel -->
+<div class="absolute inset-0 bg-gradient-to-tr from-primary/80 to-transparent"></div>
+<div class="relative z-10 p-xl max-w-lg">
+<div class="mb-lg inline-flex items-center gap-2 px-md py-sm rounded-full bg-surface-container-highest/30 backdrop-blur-md text-on-primary-container border border-primary-fixed/20">
+<span class="material-symbols-outlined text-secondary-fixed">psychology</span>
+<span class="font-label-md text-label-md text-secondary-fixed">AI-POWERED INSIGHTS</span>
+</div>
+<h1 class="font-display-lg text-display-lg text-on-primary mb-md">Advancing Public Health with Intelligence.</h1>
+<p class="font-body-lg text-body-lg text-primary-fixed-dim">Secure, scalable, and predictive tools for modern healthcare administration.</p>
+</div>
+<!-- Subtle Grid Pattern Overlay -->
+<div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PGRlZnM+PHBhdHRlcm4gaWQ9ImEiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTTAgNDBoNDBWMEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0wIDQwaDQwVjBIMHoiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2EpIi8+PC9zdmc+')] opacity-50"></div>
+</div>
+<!-- Right Side: Login Card -->
+<div class="flex-1 flex flex-col justify-center items-center p-md sm:p-xl bg-surface-bright relative">
+<!-- Mobile Brand Header (only visible on small screens) -->
+<div class="lg:hidden w-full max-w-md mb-xl text-center">
+<div class="mx-auto h-16 w-16 bg-primary-container rounded-full flex items-center justify-center mb-sm">
+<span class="material-symbols-outlined text-[32px] text-on-primary-container">shield_person</span>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary">HealthGov Intelligence</h1>
+</div>
+<div class="w-full max-w-md glass-panel rounded-xl shadow-[0_8px_24px_rgba(0,0,0,0.12)] p-xl bg-surface-container-lowest">
+<!-- Desktop Brand Header -->
+<div class="hidden lg:flex flex-col items-center mb-xl text-center">
+<div class="h-16 w-16 bg-primary-container rounded-full flex items-center justify-center mb-md shadow-sm">
+<span class="material-symbols-outlined text-[32px] text-on-primary-container">account_balance</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-xs">HealthGov Intelligence</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">District Administration Portal</p>
+</div>
+<form action="../district_dashboard/code.html" class="space-y-lg" method="POST">
+<!-- Email Field -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-sm" for="email">ADMIN EMAIL</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-sm flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline">mail</span>
+</div>
+<input class="block w-full pl-xl pr-md py-sm bg-surface rounded-lg border border-outline-variant text-on-surface focus:ring-2 focus:ring-primary focus:border-primary shadow-sm font-body-md text-body-md transition-colors" id="email" name="email" placeholder="admin@healthgov.gov" required="" type="email"/>
+</div>
+</div>
+<!-- Password Field -->
+<div>
+<div class="flex justify-between items-center mb-sm">
+<label class="block font-label-md text-label-md text-on-surface" for="password">PASSWORD</label>
+<a class="font-body-md text-body-md text-primary hover:text-primary-container transition-colors font-medium" href="#">Forgot Password?</a>
+</div>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-sm flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline">key</span>
+</div>
+<input class="block w-full pl-xl pr-md py-sm bg-surface rounded-lg border border-outline-variant text-on-surface focus:ring-2 focus:ring-primary focus:border-primary shadow-sm font-body-md text-body-md transition-colors" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+</div>
+</div>
+<!-- Remember Me (Optional structural addition for standard login flow) -->
+<div class="flex items-center">
+<input class="h-4 w-4 text-primary focus:ring-primary border-outline-variant rounded bg-surface" id="remember-me" name="remember-me" type="checkbox"/>
+<label class="ml-sm block font-body-md text-body-md text-on-surface-variant" for="remember-me">
+                            Remember this device
+                        </label>
+</div>
+<!-- Submit Button -->
+<button class="w-full flex justify-center items-center py-md px-lg border border-transparent rounded-lg shadow-sm font-label-md text-label-md text-on-primary bg-primary hover:bg-primary-container focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all active:scale-[0.98]" type="submit">
+                        Secure Login
+                        <span class="material-symbols-outlined ml-sm text-[18px]">arrow_forward</span>
+</button>
+</form>
+<!-- Footer Security Badge & Back Link -->
+<div class="mt-xl pt-lg border-t border-surface-variant flex flex-col items-center gap-md">
+<div class="flex items-center justify-center gap-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-tertiary text-[20px]">lock</span>
+<span class="font-mono-label text-mono-label text-outline">End-to-end encrypted connection</span>
+</div>
+<a href="../../../../index.html" class="inline-flex items-center gap-1 text-xs text-primary hover:underline font-medium transition-all">
+<span class="material-symbols-outlined text-[16px]">arrow_back</span>
+Back to Portal Launcher
+</a>
+</div>
+</div>
+<!-- Optional System Status Footer -->
+<div class="absolute bottom-md w-full text-center hidden sm:block">
+<p class="font-mono-label text-mono-label text-outline-variant">System Status: <span class="text-secondary">Operational</span> | v2.4.1</p>
+</div>
+<script>
+document.querySelector('form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    
+    try {
+        const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await response.json();
+        
+        if (response.ok && data.success) {
+            localStorage.setItem('user', JSON.stringify(data.user));
+            const role = data.user.role;
+            if (role === 'doctor') {
+                window.location.href = '../city_phc_details/code.html';
+            } else if (role === 'inventory') {
+                window.location.href = '../medicine_inventory_ai_forecast/code.html';
+            } else {
+                window.location.href = '../district_dashboard/code.html';
+            }
+        } else {
+            alert(data.message || 'Login failed');
+        }
+    } catch (err) {
+        console.error('Error logging in:', err);
+        alert('An error occurred. Please try again.');
+    }
+});
+</script>
+</body></html>
