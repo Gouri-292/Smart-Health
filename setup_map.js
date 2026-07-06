@@ -1,11 +1,12 @@
+require('dotenv').config();
 const mysql = require('mysql2/promise');
 
 async function setupMapData() {
   const connection = await mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'vitalis_db'
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || 'vitalis_db'
   });
 
   console.log("Connected to MySQL...");

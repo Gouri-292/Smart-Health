@@ -15,17 +15,21 @@ District Telemetry and AI forecasting system.
     ```
 
 2.  **Database Setup:**
-    Ensure you have a MySQL server running locally. By default, it connects as `root` with no password (`''`), and creates a database named `vitalis_db`. You can modify this in `db_mysql.js` and `init_db.js`.
+    Ensure you have a MySQL server running locally. By default, the application will attempt to connect using the database credentials provided in your `.env` file (or fallback to `root` with no password if not set).
     To initialize the database and seed data:
     ```bash
     node init_db.js
     ```
 
 3.  **Environment Variables:**
-    Create a `.env` file in the root directory and add your Google Gemini API key:
+    Create a `.env` file in the root directory and add your Google Gemini API key along with your database configuration:
     ```env
     GEMINI_API_KEY=your_gemini_api_key_here
     PORT=3000
+    DB_HOST=localhost
+    DB_USER=root
+    DB_PASSWORD=
+    DB_NAME=vitalis_db
     ```
 
 ## Running the Application

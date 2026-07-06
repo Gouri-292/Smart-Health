@@ -1,3 +1,4 @@
+require('dotenv').config();
 const mysql = require('mysql2/promise');
 const fs = require('fs');
 const path = require('path');
@@ -8,8 +9,8 @@ async function initDB() {
     try {
         // Connect without database first to create it
         const connection = await mysql.createConnection({
-            host: 'localhost',
-            user: 'root',
+            host: process.env.DB_HOST || 'localhost',
+            user: process.env.DB_USER || 'root',
             password: ''
         });
 
@@ -19,10 +20,10 @@ async function initDB() {
 
         // Reconnect with database
         const db = await mysql.createPool({
-            host: 'localhost',
-            user: 'root',
-            password: '',
-            database: 'vitalis_db',
+            host: process.env.DB_HOST || 'localhost',
+            user: process.env.DB_USER || 'root',
+            password: process.env.DB_PASSWORD || '',
+            database: process.env.DB_NAME || 'vitalis_db',
             waitForConnections: true,
             connectionLimit: 10,
             queueLimit: 0
