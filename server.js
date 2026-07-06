@@ -439,40 +439,44 @@ app.post('/api/ai/generate', async (req, res) => {
   }
 });
 
-// Mock GPS Tracker Loop for Ambulances
-setInterval(async () => {
-  try {
-    // Only update 'Busy' (en route) ambulances
-    const [busyAmbulances] = await db.query("SELECT * FROM ambulances WHERE status = 'Busy'");
-    
-    const updates = [];
-    for (let amb of busyAmbulances) {
-      // Simulate slight GPS movement (approx 10-50 meters)
-      const latChange = (Math.random() - 0.5) * 0.001;
-      const lngChange = (Math.random() - 0.5) * 0.001;
+if (process.env.NODE_ENV !== 'test') {
+  // Mock GPS Tracker Loop for Ambulances
+  setInterval(async () => {
+    try {
+      // Only update 'Busy' (en route) ambulances
+      const [busyAmbulances] = await db.query("SELECT * FROM ambulances WHERE status = 'Busy'");
       
-      const newLat = parseFloat(amb.latitude) + latChange;
-      const newLng = parseFloat(amb.longitude) + lngChange;
-      
-      await db.query('UPDATE ambulances SET latitude = ?, longitude = ? WHERE id = ?', [newLat, newLng, amb.id]);
-      
-      updates.push({
-        id: amb.id,
-        vehicle_number: amb.vehicle_number,
-        latitude: newLat,
-        longitude: newLng,
-        status: amb.status
-      });
-    }
+      const updates = [];
+      for (let amb of busyAmbulances) {
+        // Simulate slight GPS movement (approx 10-50 meters)
+        const latChange = (Math.random() - 0.5) * 0.001;
+        const lngChange = (Math.random() - 0.5) * 0.001;
 
-    if (updates.length > 0) {
-      io.emit('ambulance_location_update', updates);
-    }
-  } catch (error) {
-    console.error("GPS Simulation Error:", error);
-  }
-}, 3000); // Update every 3 seconds for live feel
+        const newLat = parseFloat(amb.latitude) + latChange;
+        const newLng = parseFloat(amb.longitude) + lngChange;
 
-server.listen(PORT, () => {
-  console.log(`[Server] MySQL Express API server running on http://localhost:${PORT}`);
-});
+        await db.query('UPDATE ambulances SET latitude = ?, longitude = ? WHERE id = ?', [newLat, newLng, amb.id]);
+
+        updates.push({
+          id: amb.id,
+          vehicle_number: amb.vehicle_number,
+          latitude: newLat,
+          longitude: newLng,
+          status: amb.status
+        });
+      }
+
+      if (updates.length > 0) {
+        io.emit('ambulance_location_update', updates);
+      }
+    } catch (error) {
+      console.error("GPS Simulation Error:", error);
+    }
+  }, 3000); // Update every 3 seconds for live feel
+
+  server.listen(PORT, () => {
+    console.log(`[Server] MySQL Express API server running on http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
