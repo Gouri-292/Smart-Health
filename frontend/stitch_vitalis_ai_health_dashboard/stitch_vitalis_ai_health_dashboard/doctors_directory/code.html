@@ -210,25 +210,6 @@
                     </button>
                     <div class="font-title-lg text-title-lg font-bold text-primary">HealthGov Intelligence</div>
                 </div>
-                <div class="flex items-center gap-lg">
-                    <div
-                        class="hidden sm:flex items-center bg-surface-container rounded-full px-4 py-2 border border-outline-variant focus-within:border-primary transition-colors">
-                        <span class="material-symbols-outlined text-outline mr-2 text-sm">search</span>
-                        <input
-                            class="bg-transparent border-none focus:ring-0 text-sm w-64 text-on-surface placeholder:text-outline p-0"
-                            placeholder="Search doctors..." type="text" />
-                    </div>
-                    <div class="flex items-center gap-xs">
-                        <button
-                            class="p-2 text-primary hover:bg-surface-container-high rounded-full transition-colors active:scale-95 duration-150">
-                            <span class="material-symbols-outlined">notifications</span>
-                        </button>
-                        <div
-                            class="w-8 h-8 rounded-full ml-sm border border-outline-variant overflow-hidden cursor-pointer active:scale-95 duration-150">
-                            <img alt="Administrator Profile" class="w-full h-full object-cover"
-                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSYiJbnCJ504lDls6erWt1D0O2gCiwPtTIbgMRSH8Uywkpk-R_Mam4qJ5cc0brq1GqTkTJj20NRY7Z1QFQFeJ0b7aP7-1yJuHXmKDWsVo0si1KSWi5_qCL2A2Qqw5D3WPYHU5EamnJELiUcped_Z26__5zGkM60en4TnFDvIwroRH_QJPLQGTfQktJZvjXVANoMO92WkEHNM2j3t07uBXsKp0zm2Mf8lA_3ucSHajSnVAdqINOHVhyuqjOrV8PndhpfjS3o_FNbg" />
-                        </div>
-                    </div>
                 </div>
             </div>
         </header>
@@ -242,7 +223,7 @@
                     <p class="font-body-md text-body-md text-on-surface-variant mt-1">Real-time availability,
                         performance, and feedback of medical staff.</p>
                 </div>
-                <button
+                <button onclick="registerStaff()"
                     class="hidden sm:flex items-center gap-xs bg-primary px-4 py-2 border border-transparent rounded-lg text-on-primary font-label-md text-label-md hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm">
                     <span class="material-symbols-outlined text-sm">add</span>
                     Add Staff
@@ -280,7 +261,7 @@
 
         async function loadDoctors() {
             try {
-                const res = await fetch('/api/doctors');
+                const res = await fetch('https://smart-health-sbqq.onrender.com/api/doctors');
                 const doctors = await res.json();
 
                 const container = document.getElementById('doctors-container');
@@ -337,9 +318,7 @@
                             ${doc.availability}
                         </span>
                         
-                        <button class="text-primary hover:bg-primary-container hover:text-on-primary-container p-2 rounded-full transition-colors">
-                            <span class="material-symbols-outlined">more_horiz</span>
-                        </button>
+                        
                     </div>
                 </div>
             `;
