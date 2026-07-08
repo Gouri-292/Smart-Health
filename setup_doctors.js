@@ -1,18 +1,25 @@
 require('dotenv').config();
-const mysql = require('mysql2/promise');
+const { Client } = require('pg');
 
 async function setupDoctors() {
-  const connection = await mysql.createConnection({
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'vitalis_db'
+  const connection = new Client({
+    connectionString: process.env.DATABASE_URL,
   });
 
   try {
+    await connection.connect();
+    
+    const originalQuery = connection.query.bind(connection);
+    connection.query = async function (sql, params) {
+        let index = 1;
+        const pgSql = sql.replace(/\?/g, () => `$${index++}`);
+        const result = await originalQuery(pgSql, params);
+        return [result.rows || [], result.fields || []];
+    };
+
     await connection.query(`
       CREATE TABLE IF NOT EXISTS doctors (
-        id INT AUTO_INCREMENT PRIMARY KEY,
+        id SERIAL PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         specialization VARCHAR(255),
         availability VARCHAR(100),
@@ -23,7 +30,7 @@ async function setupDoctors() {
       )
     `);
 
-    await connection.query("TRUNCATE TABLE doctors");
+    await connection.query("TRUNCATE TABLE doctors RESTART IDENTITY CASCADE");
 
     const doctors = [
       { name: 'Dr. Aarav Patel', specialization: 'Chief Cardiologist', availability: 'Available', attendance: '98%', rating: 4.9, feedback_summary: 'Highly recommended by 120+ patients for attentive care.', image_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Aarav&style=circle&backgroundColor=e2e8f0' },

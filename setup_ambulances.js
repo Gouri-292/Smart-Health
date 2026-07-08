@@ -1,19 +1,26 @@
 require('dotenv').config();
-const mysql = require('mysql2/promise');
+const { Client } = require('pg');
 
 async function setupAmbulances() {
-  const connection = await mysql.createConnection({
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'vitalis_db'
+  const connection = new Client({
+    connectionString: process.env.DATABASE_URL,
   });
 
   try {
+    await connection.connect();
+    
+    const originalQuery = connection.query.bind(connection);
+    connection.query = async function (sql, params) {
+        let index = 1;
+        const pgSql = sql.replace(/\?/g, () => `$${index++}`);
+        const result = await originalQuery(pgSql, params);
+        return [result.rows || [], result.fields || []];
+    };
+
     // Ambulances table
     await connection.query(`
       CREATE TABLE IF NOT EXISTS ambulances (
-        id INT AUTO_INCREMENT PRIMARY KEY,
+        id SERIAL PRIMARY KEY,
         vehicle_number VARCHAR(50) NOT NULL,
         status VARCHAR(50),
         driver_name VARCHAR(100),
@@ -27,18 +34,18 @@ async function setupAmbulances() {
     // Ambulance Trips table for the timeline
     await connection.query(`
       CREATE TABLE IF NOT EXISTS ambulance_trips (
-        id INT AUTO_INCREMENT PRIMARY KEY,
+        id SERIAL PRIMARY KEY,
         ambulance_id INT,
         patient_name VARCHAR(100),
         pickup_location VARCHAR(255),
         dropoff_location VARCHAR(255),
         status VARCHAR(50),
-        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
 
-    await connection.query("TRUNCATE TABLE ambulances");
-    await connection.query("TRUNCATE TABLE ambulance_trips");
+    await connection.query("TRUNCATE TABLE ambulances RESTART IDENTITY CASCADE");
+    await connection.query("TRUNCATE TABLE ambulance_trips RESTART IDENTITY CASCADE");
 
     // Seed Ambulances (around Indore: lat 22.7196, lng 75.8577)
     const ambulances = [
@@ -65,10 +72,12 @@ async function setupAmbulances() {
     ];
 
     for (let trip of trips) {
-      // Create timestamps for chronological order
+      const minutesAgo = Math.floor(Math.random() * 120);
+      const timestampDate = new Date(Date.now() - minutesAgo * 60000).toISOString();
+
       await connection.query(
-        'INSERT INTO ambulance_trips (ambulance_id, patient_name, pickup_location, dropoff_location, status, timestamp) VALUES (?, ?, ?, ?, ?, NOW() - INTERVAL ? MINUTE)',
-        [trip.ambulance_id, trip.patient_name, trip.pickup_location, trip.dropoff_location, trip.status, Math.floor(Math.random() * 120)]
+        'INSERT INTO ambulance_trips (ambulance_id, patient_name, pickup_location, dropoff_location, status, timestamp) VALUES (?, ?, ?, ?, ?, ?)',
+        [trip.ambulance_id, trip.patient_name, trip.pickup_location, trip.dropoff_location, trip.status, timestampDate]
       );
     }
 

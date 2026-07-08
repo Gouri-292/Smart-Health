@@ -1,33 +1,25 @@
 require('dotenv').config();
-const mysql = require('mysql2/promise');
+const { Client } = require('pg');
 const fs = require('fs');
 const path = require('path');
 
 async function initDB() {
-    console.log("Starting MySQL Database Initialization...");
+    console.log("Starting PostgreSQL Database Initialization...");
 
     try {
-        // Connect without database first to create it
-        const connection = await mysql.createConnection({
-            host: process.env.DB_HOST || 'localhost',
-            user: process.env.DB_USER || 'root',
-            password: ''
+        const db = new Client({
+            connectionString: process.env.DATABASE_URL,
         });
+        await db.connect();
 
-        await connection.query('CREATE DATABASE IF NOT EXISTS vitalis_db');
-        console.log("Database 'vitalis_db' verified/created.");
-        await connection.end();
-
-        // Reconnect with database
-        const db = await mysql.createPool({
-            host: process.env.DB_HOST || 'localhost',
-            user: process.env.DB_USER || 'root',
-            password: process.env.DB_PASSWORD || '',
-            database: process.env.DB_NAME || 'vitalis_db',
-            waitForConnections: true,
-            connectionLimit: 10,
-            queueLimit: 0
-        });
+        // Query wrapper to mock mysql2
+        const originalQuery = db.query.bind(db);
+        db.query = async function (sql, params) {
+            let index = 1;
+            const pgSql = sql.replace(/\?/g, () => `$${index++}`);
+            const result = await originalQuery(pgSql, params);
+            return [result.rows || [], result.fields || []];
+        };
 
         // Read seed data
         const seedPath = path.join(__dirname, 'db.json');
@@ -36,7 +28,7 @@ async function initDB() {
         // 1. Users Table
         await db.query(`
             CREATE TABLE IF NOT EXISTS users (
-                id INT AUTO_INCREMENT PRIMARY KEY,
+                id SERIAL PRIMARY KEY,
                 name VARCHAR(255) NOT NULL,
                 email VARCHAR(191) NOT NULL UNIQUE,
                 password VARCHAR(255) NOT NULL,
@@ -44,7 +36,7 @@ async function initDB() {
             )
         `);
         const [usersCheck] = await db.query('SELECT COUNT(*) as count FROM users');
-        if (usersCheck[0].count === 0 && seedData.users) {
+        if (usersCheck[0].count === '0' && seedData.users) {
             for (let user of seedData.users) {
                 await db.query('INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
                     [user.name, user.email, user.password, user.role]);
@@ -69,7 +61,7 @@ async function initDB() {
             )
         `);
         const [statsCheck] = await db.query('SELECT COUNT(*) as count FROM dashboard_stats');
-        if (statsCheck[0].count === 0 && seedData.dashboard_stats) {
+        if (statsCheck[0].count === '0' && seedData.dashboard_stats) {
             const s = seedData.dashboard_stats;
             await db.query(`INSERT INTO dashboard_stats 
                 (id, total_phcs, total_chcs, today_patients, doctors_present, ai_health_score, critical_alerts, active_ambulances, max_ambulances, vaccine_coverage) 
@@ -89,7 +81,7 @@ async function initDB() {
             )
         `);
         const [actCheck] = await db.query('SELECT COUNT(*) as count FROM activities');
-        if (actCheck[0].count === 0 && seedData.activities) {
+        if (actCheck[0].count === '0' && seedData.activities) {
             for (let act of seedData.activities) {
                 await db.query('INSERT INTO activities (id, title, description, time_ago, type) VALUES (?, ?, ?, ?, ?)',
                     [act.id, act.title, act.description, act.time_ago, act.type]);
@@ -114,7 +106,7 @@ async function initDB() {
             )
         `);
         const [predCheck] = await db.query('SELECT COUNT(*) as count FROM predictions');
-        if (predCheck[0].count === 0 && seedData.predictions) {
+        if (predCheck[0].count === '0' && seedData.predictions) {
             const p = seedData.predictions;
             await db.query(`INSERT INTO predictions 
                 (id, expected_patient_load, patient_load_trend, patient_confidence, disease_outbreak_risk, disease_risk_trend, disease_confidence, medicine_shortage_count, medicine_shortage_trend, medicine_confidence) 
@@ -135,7 +127,7 @@ async function initDB() {
             )
         `);
         const [actionsCheck] = await db.query('SELECT COUNT(*) as count FROM prescriptive_actions');
-        if (actionsCheck[0].count === 0 && seedData.prescriptive_actions) {
+        if (actionsCheck[0].count === '0' && seedData.prescriptive_actions) {
             for (let a of seedData.prescriptive_actions) {
                 await db.query('INSERT INTO prescriptive_actions (id, title, description, type, approved, reviewed) VALUES (?, ?, ?, ?, ?, ?)',
                     [a.id, a.title, a.description, a.type, a.approved, a.reviewed]);
@@ -156,7 +148,7 @@ async function initDB() {
             )
         `);
         const [staffCheck] = await db.query('SELECT COUNT(*) as count FROM phc_staff');
-        if (staffCheck[0].count === 0 && seedData.phc_staff) {
+        if (staffCheck[0].count === '0' && seedData.phc_staff) {
             for (let s of seedData.phc_staff) {
                 await db.query('INSERT INTO phc_staff (id, name, role, department, status, patients_seen, rating) VALUES (?, ?, ?, ?, ?, ?, ?)',
                     [s.id, s.name, s.role, s.department, s.status, s.patients_seen, s.rating]);
@@ -176,7 +168,7 @@ async function initDB() {
             )
         `);
         const [queueCheck] = await db.query('SELECT COUNT(*) as count FROM phc_queue');
-        if (queueCheck[0].count === 0 && seedData.phc_queue) {
+        if (queueCheck[0].count === '0' && seedData.phc_queue) {
             for (let q of seedData.phc_queue) {
                 await db.query('INSERT INTO phc_queue (id, patient_name, department, status, waiting_time) VALUES (?, ?, ?, ?, ?)',
                     [q.id, q.patient_name, q.department, q.status, q.waiting_time]);
@@ -196,7 +188,7 @@ async function initDB() {
             )
         `);
         const [invCheck] = await db.query('SELECT COUNT(*) as count FROM inventory');
-        if (invCheck[0].count === 0 && seedData.inventory) {
+        if (invCheck[0].count === '0' && seedData.inventory) {
             for (let i of seedData.inventory) {
                 await db.query('INSERT INTO inventory (id, name, stock_level, required_stock, expiry_date, status) VALUES (?, ?, ?, ?, ?, ?)',
                     [i.id, i.name, i.stock_level, i.required_stock, i.expiry_date, i.status]);

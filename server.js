@@ -3,7 +3,7 @@ console.log("Loaded API Key:", process.env.GEMINI_API_KEY ? "YES (starts with " 
 const express = require('express');
 const cors = require('cors');
 const { GoogleGenAI, Type, Schema } = require('@google/genai');
-const db = require('./db_mysql');
+const db = require('./db_pg');
 const http = require('http');
 const { Server } = require("socket.io");
 
@@ -475,7 +475,7 @@ if (process.env.NODE_ENV !== 'test') {
   }, 3000); // Update every 3 seconds for live feel
 
   server.listen(PORT, () => {
-    console.log(`[Server] MySQL Express API server running on http://localhost:${PORT}`);
+    console.log(`[Server] PostgreSQL Express API server running on http://localhost:${PORT}`);
   });
 }
 

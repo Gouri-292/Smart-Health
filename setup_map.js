@@ -1,20 +1,27 @@
 require('dotenv').config();
-const mysql = require('mysql2/promise');
+const { Client } = require('pg');
 
 async function setupMapData() {
-  const connection = await mysql.createConnection({
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'vitalis_db'
+  const connection = new Client({
+    connectionString: process.env.DATABASE_URL,
   });
 
-  console.log("Connected to MySQL...");
-
   try {
+    await connection.connect();
+    
+    const originalQuery = connection.query.bind(connection);
+    connection.query = async function (sql, params) {
+        let index = 1;
+        const pgSql = sql.replace(/\?/g, () => `$${index++}`);
+        const result = await originalQuery(pgSql, params);
+        return [result.rows || [], result.fields || []];
+    };
+
+    console.log("Connected to PostgreSQL...");
+
     await connection.query(`
       CREATE TABLE IF NOT EXISTS hospitals (
-        id INT AUTO_INCREMENT PRIMARY KEY,
+        id SERIAL PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         lat DECIMAL(10, 8) NOT NULL,
         lng DECIMAL(11, 8) NOT NULL,
@@ -25,7 +32,7 @@ async function setupMapData() {
     `);
     console.log("Table 'hospitals' created or already exists.");
 
-    await connection.query('TRUNCATE TABLE hospitals');
+    await connection.query('TRUNCATE TABLE hospitals RESTART IDENTITY CASCADE');
 
     const seedHospitals = [
       { name: "M.Y. Hospital Indore", lat: 22.71353, lng: 75.87956, type: "General Government", status: "Critical", current_patients: 1240 },
