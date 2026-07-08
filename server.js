@@ -445,7 +445,7 @@ if (process.env.NODE_ENV !== 'test') {
     try {
       // Only update 'Busy' (en route) ambulances
       const [busyAmbulances] = await db.query("SELECT * FROM ambulances WHERE status = 'Busy'");
-      
+
       const updates = [];
       for (let amb of busyAmbulances) {
         // Simulate slight GPS movement (approx 10-50 meters)

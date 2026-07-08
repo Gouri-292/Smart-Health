@@ -1,24 +1,40 @@
 require('dotenv').config();
-const mysql = require('mysql2/promise');
+const { Client } = require('pg');
 
 async function addRoles() {
-  const connection = await mysql.createConnection({
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'vitalis_db'
+  const client = new Client({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false }
   });
 
   try {
-    // Check if column exists, if not add it
-    const [columns] = await connection.query("SHOW COLUMNS FROM users LIKE 'role'");
-    if (columns.length === 0) {
-      await connection.query("ALTER TABLE users ADD COLUMN role VARCHAR(50) DEFAULT 'admin'");
+    await client.connect();
+
+    // Ensure users table exists with role
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL UNIQUE,
+        password VARCHAR(255) NOT NULL,
+        role VARCHAR(50) DEFAULT 'admin'
+      )
+    `);
+
+    // Check if column exists, if not add it (Postgres style)
+    const result = await client.query(`
+      SELECT column_name 
+      FROM information_schema.columns 
+      WHERE table_name='users' AND column_name='role'
+    `);
+
+    if (result.rowCount === 0) {
+      await client.query("ALTER TABLE users ADD COLUMN role VARCHAR(50) DEFAULT 'admin'");
       console.log("Added 'role' column to users table.");
     }
 
     // Clear existing users to cleanly set up the three roles
-    await connection.query("TRUNCATE TABLE users");
+    await client.query("TRUNCATE TABLE users RESTART IDENTITY CASCADE");
 
     const users = [
       { name: 'Dr. Sarah Chen', email: 'admin@health.gov.in', password: 'admin', role: 'admin' },
@@ -27,8 +43,8 @@ async function addRoles() {
     ];
 
     for (let u of users) {
-      await connection.query(
-        'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
+      await client.query(
+        'INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4)',
         [u.name, u.email, u.password, u.role]
       );
     }
@@ -36,7 +52,7 @@ async function addRoles() {
   } catch (err) {
     console.error("Error setting up roles:", err);
   } finally {
-    await connection.end();
+    await client.end();
   }
 }
 
