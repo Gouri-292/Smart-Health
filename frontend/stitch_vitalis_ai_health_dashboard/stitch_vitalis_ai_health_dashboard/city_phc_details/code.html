@@ -234,14 +234,7 @@
 </div>
 </div>
 </div>
-<div class="flex gap-md">
-<button class="px-md py-sm rounded-lg border border-outline text-on-surface font-label-md text-label-md hover:bg-surface-container-low transition-colors flex items-center gap-xs">
-<span class="material-symbols-outlined text-[18px]">map</span> View Map
-                        </button>
-<button class="px-md py-sm rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm flex items-center gap-xs">
-<span class="material-symbols-outlined text-[18px]">edit</span> Edit Details
-                        </button>
-</div>
+
 </div>
 </div>
 <!-- Stats Grid -->
@@ -252,7 +245,7 @@
 <div class="p-sm bg-secondary-container/30 text-secondary rounded-lg">
 <span class="material-symbols-outlined">group</span>
 </div>
-<span class="material-symbols-outlined text-outline hover:text-on-surface cursor-pointer">more_vert</span>
+
 </div>
 <p class="font-body-md text-body-md text-on-surface-variant mb-xs">Active Staff</p>
 <h3 id="stat-active-staff" class="font-display-lg text-display-lg text-on-surface">42</h3>
@@ -266,7 +259,7 @@
 <div class="p-sm bg-primary-container/30 text-primary rounded-lg">
 <span class="material-symbols-outlined">person_add</span>
 </div>
-<span class="material-symbols-outlined text-outline hover:text-on-surface cursor-pointer">more_vert</span>
+
 </div>
 <p class="font-body-md text-body-md text-on-surface-variant mb-xs">Today's Patients</p>
 <h3 id="stat-today-patients" class="font-display-lg text-display-lg text-on-surface">128</h3>
@@ -280,7 +273,7 @@
 <div class="p-sm bg-tertiary-container/30 text-tertiary rounded-lg">
 <span class="material-symbols-outlined">bed</span>
 </div>
-<span class="material-symbols-outlined text-outline hover:text-on-surface cursor-pointer">more_vert</span>
+
 </div>
 <p class="font-body-md text-body-md text-on-surface-variant mb-xs">Available Beds</p>
 <h3 id="stat-beds" class="font-display-lg text-display-lg text-on-surface">14<span class="text-title-lg text-outline">/50</span></h3>
@@ -405,7 +398,7 @@ async function loadPHCDetails() {
         const rowHtml = `
           <tr class="border-b border-outline-variant/10 hover:bg-secondary/5 transition-colors cursor-pointer">
             <td class="px-md py-sm flex items-center gap-sm">
-              <div class="w-8 h-8 rounded-full ${avatarBg} flex items-center justify-center font-bold text-label-md">${member.initial}</div>
+              <div class="w-8 h-8 rounded-full ${avatarBg} flex items-center justify-center font-bold text-label-md">${(member.name || '').replace('Dr. ', '').charAt(0) || 'D'}</div>
               ${member.name}
             </td>
             <td class="px-md py-sm text-on-surface-variant">${member.department}</td>
