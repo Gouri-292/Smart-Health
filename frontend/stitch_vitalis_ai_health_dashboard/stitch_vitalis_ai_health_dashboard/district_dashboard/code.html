@@ -196,20 +196,23 @@
 </div>
 <div class="flex items-center gap-lg">
 <!-- Search Bar on Left of Actions -->
-<div class="hidden sm:flex items-center bg-surface-container rounded-full px-4 py-2 border border-outline-variant focus-within:border-primary transition-colors">
+
+<div class="hidden sm:flex items-center bg-surface-container rounded-full px-4 py-2 border border-outline-variant focus-within:border-primary transition-colors relative">
 <span class="material-symbols-outlined text-outline mr-2 text-sm">search</span>
-<input class="bg-transparent border-none focus:ring-0 text-sm w-64 text-on-surface placeholder:text-outline p-0" placeholder="Search districts, metrics..." type="text"/>
+<input id="global-search" oninput="handleSearch(this.value)" class="bg-transparent border-none focus:ring-0 text-sm w-64 text-on-surface placeholder:text-outline p-0" placeholder="Search districts, metrics..." type="text"/>
+<div id="search-results" class="absolute top-full left-0 mt-2 w-full bg-surface-container-lowest border border-outline-variant rounded-xl shadow-lg hidden z-50 max-h-64 overflow-y-auto"></div>
 </div>
-<div class="flex items-center gap-xs">
-<button class="p-2 text-primary hover:bg-surface-container-high rounded-full transition-colors active:scale-95 duration-150">
+
+
+<div class="flex items-center gap-xs relative">
+<button onclick="toggleNotifications()" class="p-2 text-primary hover:bg-surface-container-high rounded-full transition-colors active:scale-95 duration-150 relative">
 <span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
 </button>
-<button class="p-2 text-primary hover:bg-surface-container-high rounded-full transition-colors active:scale-95 duration-150">
-<span class="material-symbols-outlined">help</span>
-</button>
-<button class="p-2 text-primary hover:bg-surface-container-high rounded-full transition-colors active:scale-95 duration-150">
-<span class="material-symbols-outlined">settings</span>
-</button>
+<div id="notifications-dropdown" class="absolute top-full right-0 mt-2 w-80 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-lg hidden z-50 overflow-hidden">
+  <div class="p-3 border-b border-outline-variant bg-surface-container-low font-title-sm text-on-surface font-bold">Notifications</div>
+  <div id="notifications-list" class="max-h-64 overflow-y-auto"></div>
+</div>
 <div class="w-8 h-8 rounded-full ml-sm border border-outline-variant overflow-hidden cursor-pointer active:scale-95 duration-150">
 <img alt="Administrator Profile" class="w-full h-full object-cover" data-alt="A professional headshot of a mature female administrator wearing a sharp navy blue blazer against a crisp white background. Lighting is soft and bright, signifying competence and approachability in a healthcare management setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSYiJbnCJ504lDls6erWt1D0O2gCiwPtTIbgMRSH8Uywkpk-R_Mam4qJ5cc0brq1GqTkTJj20NRY7Z1QFQFeJ0b7aP7-1yJuHXmKDWsVo0si1KSWi5_qCL2A2Qqw5D3WPYHU5EamnJELiUcped_Z26__5zGkM60en4TnFDvIwroRH_QJPLQGTfQktJZvjXVANoMO92WkEHNM2j3t07uBXsKp0zm2Mf8lA_3ucSHajSnVAdqINOHVhyuqjOrV8PndhpfjS3o_FNbg"/>
 </div>
@@ -225,10 +228,7 @@
 <h2 class="font-headline-lg text-headline-lg text-on-surface">District Overview</h2>
 <p class="font-body-md text-body-md text-on-surface-variant mt-1">Real-time telemetry for regional health facilities.</p>
 </div>
-<button class="hidden sm:flex items-center gap-xs bg-surface-container px-4 py-2 border border-outline-variant rounded-lg text-primary font-label-md text-label-md hover:bg-surface-container-high transition-colors">
-<span class="material-symbols-outlined text-sm">download</span>
-                    Export Report
-                </button>
+<button onclick="downloadExport()" class="hidden sm:flex items-center gap-xs bg-surface-container px-4 py-2 border border-outline-variant rounded-lg text-primary font-label-md text-label-md hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-sm">download</span>Export Report</button>
 </div>
 <!-- Metrics Grid -->
 <div class="grid grid-cols-2 md:grid-cols-4 gap-md md:gap-lg">
@@ -477,4 +477,61 @@ setInterval(() => {
   loadMapData();
 }, 5000);
 </script>
+
+<script>
+  let searchTimeout;
+  async function handleSearch(query) {
+    const resultsDiv = document.getElementById('search-results');
+    if (!query) {
+      resultsDiv.classList.add('hidden');
+      return;
+    }
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(async () => {
+      try {
+        const res = await fetch('https://smart-health-sbqq.onrender.com/api/hospitals/search?q=' + encodeURIComponent(query));
+        const data = await res.json();
+        if (data.length > 0) {
+          resultsDiv.innerHTML = data.map(h => `
+            <div class="p-3 border-b border-outline-variant/30 hover:bg-surface-container-low cursor-pointer">
+              <div class="font-bold text-sm">${h.name}</div>
+              <div class="text-xs text-on-surface-variant">${h.type} • ${h.current_patients} patients</div>
+            </div>
+          `).join('');
+        } else {
+          resultsDiv.innerHTML = '<div class="p-3 text-sm text-on-surface-variant">No results found</div>';
+        }
+        resultsDiv.classList.remove('hidden');
+      } catch (err) {
+        console.error(err);
+      }
+    }, 300);
+  }
+
+  async function toggleNotifications() {
+    const dropdown = document.getElementById('notifications-dropdown');
+    dropdown.classList.toggle('hidden');
+    if (!dropdown.classList.contains('hidden')) {
+      const list = document.getElementById('notifications-list');
+      list.innerHTML = '<div class="p-3 text-sm text-center">Loading...</div>';
+      try {
+        const res = await fetch('https://smart-health-sbqq.onrender.com/api/notifications');
+        const data = await res.json();
+        list.innerHTML = data.map(n => `
+          <div class="p-3 border-b border-outline-variant/30 hover:bg-surface-container-low cursor-pointer">
+            <div class="font-bold text-sm">${n.title} <span class="text-xs text-on-surface-variant ml-2">${n.time}</span></div>
+            <div class="text-xs text-on-surface-variant mt-1">${n.message}</div>
+          </div>
+        `).join('');
+      } catch (err) {
+        list.innerHTML = '<div class="p-3 text-sm text-error">Failed to load</div>';
+      }
+    }
+  }
+
+  function downloadExport() {
+    window.location.href = 'https://smart-health-sbqq.onrender.com/api/hospitals/export';
+  }
+</script>
+
 </body></html>

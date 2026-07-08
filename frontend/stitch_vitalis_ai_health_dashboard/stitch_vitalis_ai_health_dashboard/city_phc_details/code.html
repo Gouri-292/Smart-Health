@@ -508,4 +508,61 @@ async function registerPatient() {
 loadPHCDetails();
 setInterval(loadPHCDetails, 8000);
 </script>
+
+<script>
+  let searchTimeout;
+  async function handleSearch(query) {
+    const resultsDiv = document.getElementById('search-results');
+    if (!query) {
+      resultsDiv.classList.add('hidden');
+      return;
+    }
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(async () => {
+      try {
+        const res = await fetch('https://smart-health-sbqq.onrender.com/api/hospitals/search?q=' + encodeURIComponent(query));
+        const data = await res.json();
+        if (data.length > 0) {
+          resultsDiv.innerHTML = data.map(h => `
+            <div class="p-3 border-b border-outline-variant/30 hover:bg-surface-container-low cursor-pointer">
+              <div class="font-bold text-sm">${h.name}</div>
+              <div class="text-xs text-on-surface-variant">${h.type} • ${h.current_patients} patients</div>
+            </div>
+          `).join('');
+        } else {
+          resultsDiv.innerHTML = '<div class="p-3 text-sm text-on-surface-variant">No results found</div>';
+        }
+        resultsDiv.classList.remove('hidden');
+      } catch (err) {
+        console.error(err);
+      }
+    }, 300);
+  }
+
+  async function toggleNotifications() {
+    const dropdown = document.getElementById('notifications-dropdown');
+    dropdown.classList.toggle('hidden');
+    if (!dropdown.classList.contains('hidden')) {
+      const list = document.getElementById('notifications-list');
+      list.innerHTML = '<div class="p-3 text-sm text-center">Loading...</div>';
+      try {
+        const res = await fetch('https://smart-health-sbqq.onrender.com/api/notifications');
+        const data = await res.json();
+        list.innerHTML = data.map(n => `
+          <div class="p-3 border-b border-outline-variant/30 hover:bg-surface-container-low cursor-pointer">
+            <div class="font-bold text-sm">${n.title} <span class="text-xs text-on-surface-variant ml-2">${n.time}</span></div>
+            <div class="text-xs text-on-surface-variant mt-1">${n.message}</div>
+          </div>
+        `).join('');
+      } catch (err) {
+        list.innerHTML = '<div class="p-3 text-sm text-error">Failed to load</div>';
+      }
+    }
+  }
+
+  function downloadExport() {
+    window.location.href = 'https://smart-health-sbqq.onrender.com/api/hospitals/export';
+  }
+</script>
+
 </body></html>

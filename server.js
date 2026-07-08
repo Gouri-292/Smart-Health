@@ -174,6 +174,42 @@ app.post('/api/doctors', async (req, res) => {
   }
 });
 
+// Notifications
+app.get('/api/notifications', (req, res) => {
+  res.json([
+    { id: 1, title: 'Inventory Alert', message: 'Paracetamol batch out for delivery.', type: 'info', time: '5m ago' },
+    { id: 2, title: 'Patient Queue', message: 'High surge in Emergency department.', type: 'warning', time: '12m ago' },
+    { id: 3, title: 'System', message: 'Scheduled maintenance tonight at 2AM.', type: 'alert', time: '1h ago' }
+  ]);
+});
+
+// Hospitals Search
+app.get('/api/hospitals/search', async (req, res) => {
+  try {
+    const query = req.query.q || '';
+    const [rows] = await db.query('SELECT * FROM hospitals WHERE name ILIKE ? OR type ILIKE ? LIMIT 5', [`%${query}%`, `%${query}%`]);
+    res.json(rows);
+  } catch (error) {
+    res.status(500).json({ error: 'Search failed' });
+  }
+});
+
+// Hospitals Export
+app.get('/api/hospitals/export', async (req, res) => {
+  try {
+    const [rows] = await db.query('SELECT * FROM hospitals');
+    let csv = 'ID,Name,Type,Status,Current Patients\n';
+    rows.forEach(r => {
+      csv += `${r.id},"${r.name}","${r.type}","${r.status}",${r.current_patients}\n`;
+    });
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename="hospitals_report.csv"');
+    res.send(csv);
+  } catch (error) {
+    res.status(500).json({ error: 'Export failed' });
+  }
+});
+
 // Ambulances Routes
 app.get('/api/ambulances', async (req, res) => {
   try {
