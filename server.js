@@ -155,8 +155,22 @@ app.get('/api/doctors', async (req, res) => {
     const [rows] = await db.query('SELECT * FROM doctors');
     res.json(rows);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Failed to fetch doctors' });
+  }
+});
+
+app.post('/api/doctors', async (req, res) => {
+  try {
+    const { name, specialization } = req.body;
+    const image_url = `https://api.dicebear.com/7.x/avataaars/svg?seed=${name.replace(' ', '')}&style=circle&backgroundColor=e2e8f0`;
+    await db.query(
+      'INSERT INTO doctors (name, specialization, availability, attendance, rating, feedback_summary, image_url) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [name, specialization, 'Available', '100%', 5.0, 'New doctor joined the team.', image_url]
+    );
+    const [doctors] = await db.query('SELECT * FROM doctors');
+    res.json(doctors);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to add doctor' });
   }
 });
 

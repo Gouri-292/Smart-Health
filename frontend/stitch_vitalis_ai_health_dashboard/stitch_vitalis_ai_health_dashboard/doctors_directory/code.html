@@ -257,6 +257,27 @@
         </div>
     </main>
     <script>
+        
+        async function registerStaff() {
+            const name = prompt("Enter doctor's full name:");
+            if (!name) return;
+            const specialization = prompt("Enter specialization:");
+            if (!specialization) return;
+
+            try {
+                const res = await fetch('https://smart-health-sbqq.onrender.com/api/doctors', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, specialization })
+                });
+                if (res.ok) {
+                    loadDoctors();
+                }
+            } catch (error) {
+                console.error("Error adding staff:", error);
+            }
+        }
+
         async function loadDoctors() {
             try {
                 const res = await fetch('/api/doctors');

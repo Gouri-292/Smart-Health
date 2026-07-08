@@ -421,7 +421,7 @@ async function loadPHCDetails() {
     }
 
     // 3. Fetch Patient Queue
-    const queueRes = await fetch('/api/phc/1/queue');
+    const queueRes = await fetch('https://smart-health-sbqq.onrender.com/api/phc/1/queue');
     const queue = await queueRes.json();
     
     if (queueRes.ok) {
