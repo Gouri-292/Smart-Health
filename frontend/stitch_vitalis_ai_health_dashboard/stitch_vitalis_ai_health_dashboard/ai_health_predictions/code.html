@@ -3,6 +3,13 @@
 <html class="light" lang="en">
 
 <head>
+
+<script>
+  if (!localStorage.getItem('user')) {
+    window.location.href = '../login_healthgov_intelligence/code.html';
+  }
+</script>
+
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>AI Prediction Dashboard - HealthGov Intelligence</title>
