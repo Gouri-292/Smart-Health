@@ -353,7 +353,7 @@
         async function loadPredictions() {
             try {
                 // 1. Load Stats values
-                const predRes = await fetch('/api/predictions');
+                const predRes = await fetch('https://smart-health-sbqq.onrender.com/api/predictions');
                 const pred = await predRes.json();
 
                 if (predRes.ok) {
@@ -371,7 +371,7 @@
                 }
 
                 // 2. Load Actions
-                const actionRes = await fetch('/api/predictions/actions');
+                const actionRes = await fetch('https://smart-health-sbqq.onrender.com/api/predictions/actions');
                 const actions = await actionRes.json();
 
                 if (actionRes.ok) {
@@ -417,7 +417,7 @@
 
         async function approveAction(id) {
             try {
-                const res = await fetch(`/api/predictions/actions/${id}/approve`, {
+                const res = await fetch(`https://smart-health-sbqq.onrender.com/api/predictions/actions/${id}/approve`, {
                     method: 'POST'
                 });
                 const data = await res.json();
@@ -437,7 +437,7 @@
             btn.disabled = true;
 
             try {
-                const res = await fetch('/api/ai/generate', { method: 'POST' });
+                const res = await fetch('https://smart-health-sbqq.onrender.com/api/ai/generate', { method: 'POST' });
                 const data = await res.json();
                 if (res.ok && data.success) {
                     loadPredictions();

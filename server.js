@@ -458,9 +458,9 @@ app.post('/api/ai/generate', async (req, res) => {
       }
     });
 
-    const output = JSON.parse(response.text);
-
-    // Save predictions
+    // Clean up potential markdown code blocks before parsing
+    const cleanText = response.text.replace(/^```json\n?/, '').replace(/\n?```$/, '').trim();
+    const output = JSON.parse(cleanText);    // Save predictions
     const p = output.predictions;
     await db.query(`UPDATE predictions SET 
       expected_patient_load = ?, patient_load_trend = ?, patient_confidence = ?, 
