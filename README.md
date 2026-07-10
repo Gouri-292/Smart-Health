@@ -14,6 +14,8 @@ Instead of attempting to build a massive, complex healthcare CRM, Vitalis AI foc
 
 ![Dashboard Preview](frontend/stitch_vitalis_ai_health_dashboard/stitch_vitalis_ai_health_dashboard/login_healthgov_intelligence/screen.png)
 
+Live Link :-https://smart-health-steel.vercel.app
+
 ## Key Features
 - **Real-Time District Telemetry:** Live monitoring of hospital loads, patient queues, and available beds across multiple PHCs.
 - **AI Health Predictions:** Google Gemini-powered forecasting of potential local disease outbreaks based on incoming patient symptoms.

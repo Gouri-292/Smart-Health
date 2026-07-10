@@ -396,6 +396,8 @@ app.post('/api/inventory/transfer', async (req, res) => {
 // AI Insights Route
 app.post('/api/ai/generate', async (req, res) => {
   try {
+    console.log("[AI] Received request to generate AI insights...");
+
     const [inventory] = await db.query('SELECT * FROM inventory');
     const [staff] = await db.query('SELECT * FROM phc_staff');
     const [queue] = await db.query('SELECT * FROM phc_queue');
@@ -458,9 +460,9 @@ app.post('/api/ai/generate', async (req, res) => {
       }
     });
 
-    // Clean up potential markdown code blocks before parsing
-    const cleanText = response.text.replace(/^```json\n?/, '').replace(/\n?```$/, '').trim();
-    const output = JSON.parse(cleanText);    // Save predictions
+    const output = JSON.parse(response.text);
+
+    // Save predictions
     const p = output.predictions;
     await db.query(`UPDATE predictions SET 
       expected_patient_load = ?, patient_load_trend = ?, patient_confidence = ?, 
@@ -482,9 +484,11 @@ app.post('/api/ai/generate', async (req, res) => {
     // Increment critical alerts since new actions were added
     await db.query('UPDATE dashboard_stats SET critical_alerts = critical_alerts + ? WHERE id = 1', [output.prescriptive_actions.length]);
 
+    console.log("[AI] Successfully generated insights!", output);
     res.json({ success: true, data: output });
   } catch (error) {
     console.error("AI Gen Error:", error);
+    console.error("Cause:", error.cause);
     res.status(500).json({ success: false, message: 'AI generation failed', error: error.message });
   }
 });
