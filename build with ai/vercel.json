@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:match*",
+      "destination": "https://smart-health-sbqq.onrender.com/api/:match*"
+    }
+  ]
+}

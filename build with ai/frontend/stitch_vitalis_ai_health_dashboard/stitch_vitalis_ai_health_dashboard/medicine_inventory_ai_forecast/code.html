@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+
+<script>
+  if (!localStorage.getItem('user')) {
+    window.location.href = '../login_healthgov_intelligence/code.html';
+  }
+</script>
+
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Medicine Inventory Dashboard - HealthGov Intelligence</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed-dim": "#a9c7ff",
+                        "surface": "#f7f9fb",
+                        "secondary-fixed": "#90f4e8",
+                        "on-tertiary-fixed-variant": "#00504d",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-secondary-fixed": "#00201d",
+                        "surface-bright": "#f7f9fb",
+                        "primary-fixed": "#d6e3ff",
+                        "on-error": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#00201f",
+                        "surface-container-high": "#e6e8ea",
+                        "on-background": "#191c1e",
+                        "on-surface-variant": "#424752",
+                        "outline": "#727783",
+                        "surface-variant": "#e0e3e5",
+                        "tertiary": "#00514f",
+                        "tertiary-fixed": "#74f7f1",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-surface": "#191c1e",
+                        "on-primary-fixed-variant": "#00468c",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary": "#ffffff",
+                        "outline-variant": "#c2c6d4",
+                        "surface-dim": "#d8dadc",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed": "#001b3d",
+                        "surface-container": "#eceef0",
+                        "on-tertiary-container": "#6beee9",
+                        "on-secondary-fixed-variant": "#00504a",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#73d7cc",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#a9c7ff",
+                        "tertiary-container": "#006b68",
+                        "background": "#f7f9fb",
+                        "inverse-surface": "#2d3133",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#53dad5",
+                        "secondary-container": "#90f4e8",
+                        "surface-tint": "#005db6",
+                        "on-error-container": "#93000a",
+                        "secondary": "#006a63",
+                        "on-primary-container": "#c8daff",
+                        "primary-container": "#005eb8",
+                        "primary": "#00478d",
+                        "on-secondary-container": "#007169"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "xl": "32px",
+                        "base": "4px",
+                        "container-max": "1440px",
+                        "sm": "8px",
+                        "lg": "24px",
+                        "sidebar-width": "280px",
+                        "md": "16px"
+                    },
+                    "fontFamily": {
+                        "title-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "mono-label": ["JetBrains Mono"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "title-lg": ["20px", { "lineHeight": "28px", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "mono-label": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1.5px solid transparent;
+            background-clip: padding-box;
+            position: relative;
+        }
+        .glass-panel::before {
+            content: '';
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            z-index: -1;
+            margin: -1.5px;
+            border-radius: inherit;
+            background: linear-gradient(to bottom right, #00478d, #90f4e8);
+        }
+        .shadow-elevation-1 { box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        .shadow-elevation-2 { box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+    </style>
+    <script src="/config.js"></script>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased overflow-hidden flex h-screen">
+<!-- SideNavBar -->
+<aside class="hidden md:flex fixed left-0 top-0 h-screen w-sidebar-width flex-col z-40 bg-primary dark:bg-inverse-surface shadow-md">
+<div class="p-lg flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-surface-container overflow-hidden flex items-center justify-center shrink-0">
+<img alt="Government Seal" class="w-full h-full object-cover" data-alt="A small circular icon or crest representing a government seal in a crisp, modern minimalist style, suitable for a healthcare application dashboard in light mode. The color palette features neutral slate and trust blue." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQj1s5MI2NzGsCRuM-CwqTJMUjVdARv8hM2-h1hy6SZB_EXz31gAeEP_0bjp8qcHAguCb9illUJ4MFAgRzCnZAnZ1ILxObn6n53CTlDeCRVpUsOpmuKjLo0pVVg4UYOvvv_gPw3290LjNJKJv-WTFyIpUKGGIoRfDiOXLs1nziHkgS7QoyjiIKOmY4YfzDzx3PSjo-nEAImnW7gVtDxi9_3Gi648jg3N7InAuR9ri3gh8iXSNFlnqghE2MC9z_XdEtw7_CtRvnlg"/>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md font-bold text-on-primary">District Admin</h2>
+<p class="font-label-md text-label-md text-primary-fixed-dim">Public Health Division</p>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto mt-4 flex flex-col gap-1">
+<a class="text-primary-fixed-dim flex items-center px-md py-sm hover:bg-primary-container hover:text-on-primary-container transition-all active:translate-x-1 duration-200" href="../district_dashboard/code.html">
+<span class="material-symbols-outlined mr-sm text-[20px]" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="text-primary-fixed-dim flex items-center px-md py-sm hover:bg-primary-container hover:text-on-primary-container transition-all active:translate-x-1 duration-200" href="../city_phc_details/code.html">
+<span class="material-symbols-outlined mr-sm text-[20px]" data-icon="domain">domain</span>
+<span class="font-label-md text-label-md">Health Centres</span>
+</a>
+
+<a class="text-primary-fixed-dim flex items-center px-md py-sm hover:bg-primary-container hover:text-on-primary-container transition-all active:translate-x-1 duration-200" href="../doctors_directory/code.html">
+<span class="material-symbols-outlined mr-sm text-[20px]" data-icon="medical_services">medical_services</span>
+<span class="font-label-md text-label-md">Medical Staff</span>
+</a>
+<a class="bg-secondary-container text-on-secondary-container border-l-4 border-secondary-fixed font-bold flex items-center px-md py-sm transition-all active:translate-x-1 duration-200" href="code.html">
+<span class="material-symbols-outlined mr-sm text-[20px]" data-icon="inventory_2" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="font-label-md text-label-md">Inventory</span>
+</a>
+<a class="text-primary-fixed-dim flex items-center px-md py-sm hover:bg-primary-container hover:text-on-primary-container transition-all active:translate-x-1 duration-200" href="../ai_health_predictions/code.html">
+<span class="material-symbols-outlined mr-sm text-[20px]" data-icon="psychology">psychology</span>
+<span class="font-label-md text-label-md">AI Predictions</span>
+</a>
+<a class="text-primary-fixed-dim flex items-center px-md py-sm hover:bg-primary-container hover:text-on-primary-container transition-all active:translate-x-1 duration-200" href="../ambulances_directory/code.html">
+<span class="material-symbols-outlined mr-sm text-[20px]" data-icon="ambulance">ambulance</span>
+<span class="font-label-md text-label-md">Ambulances</span>
+</a>
+</nav>
+<div class="mt-auto flex flex-col gap-1 pb-lg">
+<a class="text-primary-fixed-dim flex items-center px-md py-sm hover:bg-primary-container hover:text-on-primary-container transition-all active:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined mr-sm text-[20px]" data-icon="description">description</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+<a class="text-primary-fixed-dim flex items-center px-md py-sm hover:bg-primary-container hover:text-on-primary-container transition-all active:translate-x-1 duration-200" href="../login_healthgov_intelligence/code.html">
+<span class="material-symbols-outlined mr-sm text-[20px]" data-icon="logout">logout</span>
+<span class="font-label-md text-label-md">Logout</span>
+</a>
+</div>
+</aside>
+<div class="flex-1 flex flex-col md:ml-sidebar-width min-w-0">
+<!-- TopNavBar -->
+<header class="bg-surface dark:bg-inverse-surface shadow-sm border-b border-outline-variant dark:border-outline docked full-width top-0 sticky z-50">
+<div class="flex justify-between items-center w-full px-lg h-16 max-w-container-max mx-auto">
+<div class="flex items-center gap-md">
+<button class="md:hidden p-2 text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-full active:scale-95 duration-150">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<span class="font-title-lg text-title-lg font-bold text-primary dark:text-primary-fixed-dim hidden md:block">HealthGov Intelligence</span>
+</div>
+<div class="flex-1 max-w-md mx-md">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input id="inventory-search" class="w-full bg-surface-container-low border border-outline-variant rounded-full py-2 pl-10 pr-4 text-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" placeholder="Search medicines, batches..." type="text"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 overflow-y-auto p-md md:p-lg bg-surface-container-low flex flex-col gap-lg lg:flex-row">
+<div class="flex-1 flex flex-col gap-lg min-w-0">
+<div class="flex justify-between items-end flex-wrap gap-md">
+<div>
+<h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">Medicine Inventory</h1>
+<p class="text-on-surface-variant mt-1">Manage stock levels across district facilities.</p>
+</div>
+<button onclick="addStockPrompt()" class="bg-primary text-on-primary px-6 py-2 rounded-full font-label-md text-label-md flex items-center gap-2 hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm active:scale-95">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                        Add Stock
+                    </button>
+</div>
+<!-- Bento Grid for Stats -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+<div class="bg-surface shadow-elevation-1 rounded-xl p-md border border-surface-variant">
+<div class="flex justify-between items-start mb-4">
+<div class="w-10 h-10 rounded-lg bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">medication</span>
+</div>
+<span class="text-surface-tint font-mono-label bg-primary-fixed px-2 py-1 rounded">Total SKUs</span>
+</div>
+<div class="font-display-lg text-display-lg text-on-surface">1,402</div>
+<div class="flex items-center mt-2 text-secondary font-label-md text-label-md">
+<span class="material-symbols-outlined text-[16px] mr-1">trending_up</span>
+<span>+12 this month</span>
+</div>
+</div>
+<div class="bg-surface shadow-elevation-1 rounded-xl p-md border border-surface-variant">
+<div class="flex justify-between items-start mb-4">
+<div class="w-10 h-10 rounded-lg bg-error-container flex items-center justify-center text-on-error-container">
+<span class="material-symbols-outlined">warning</span>
+</div>
+<span class="text-error font-mono-label bg-error-container px-2 py-1 rounded">Critical Stock</span>
+</div>
+<div id="stat-critical-count" class="font-display-lg text-display-lg text-on-surface">24</div>
+<div class="flex items-center mt-2 text-error font-label-md text-label-md">
+<span class="material-symbols-outlined text-[16px] mr-1">trending_down</span>
+<span>Action needed immediately</span>
+</div>
+</div>
+<div class="bg-surface shadow-elevation-1 rounded-xl p-md border border-surface-variant">
+<div class="flex justify-between items-start mb-4">
+<div class="w-10 h-10 rounded-lg bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined">event_busy</span>
+</div>
+<span class="text-tertiary font-mono-label bg-tertiary-fixed px-2 py-1 rounded">Expiring &lt; 30 Days</span>
+</div>
+<div id="stat-expiring-count" class="font-display-lg text-display-lg text-on-surface">89</div>
+<div class="flex items-center mt-2 text-on-surface-variant font-label-md text-label-md">
+<span class="material-symbols-outlined text-[16px] mr-1">info</span>
+<span>Review required</span>
+</div>
+</div>
+</div>
+<!-- Main Data Table -->
+<div class="bg-surface shadow-elevation-1 rounded-xl border border-surface-variant overflow-hidden flex-1 flex flex-col">
+<div class="p-4 border-b border-surface-variant bg-surface-bright flex justify-between items-center">
+<h3 class="font-title-lg text-title-lg">Current Inventory Status</h3>
+<button class="text-primary hover:bg-primary-fixed p-2 rounded transition-colors">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-label-md text-label-md uppercase tracking-wider">
+<th class="p-4 font-medium border-b border-surface-variant">Medicine Name</th>
+<th class="p-4 font-medium border-b border-surface-variant">Stock Level</th>
+<th class="p-4 font-medium border-b border-surface-variant">Required Stock</th>
+<th class="p-4 font-medium border-b border-surface-variant">Expiry Date</th>
+<th class="p-4 font-medium border-b border-surface-variant">Status</th>
+<th class="p-4 font-medium border-b border-surface-variant">Actions</th>
+</tr>
+</thead>
+<tbody id="inventory-table-body" class="font-body-md text-body-md text-on-surface">
+<!-- Inventory table loaded dynamically -->
+</tbody>
+</table>
+</div>
+<div class="p-4 border-t border-surface-variant text-sm text-on-surface-variant flex justify-between items-center bg-surface-bright">
+<span id="pagination-info">Showing 1 to 5 of 5 entries</span>
+<div class="flex gap-2">
+<button id="prev-page" onclick="prevPage()" class="px-3 py-1 border border-outline-variant rounded hover:bg-surface-container-high transition-colors disabled:opacity-50" disabled="">Previous</button>
+<button id="next-page" onclick="nextPage()" class="px-3 py-1 border border-outline-variant rounded hover:bg-surface-container-high transition-colors disabled:opacity-50">Next</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Sidebar: AI Recommendation Panel -->
+<div class="w-full lg:w-[320px] xl:w-[360px] flex-shrink-0 flex flex-col gap-md">
+<div class="glass-panel rounded-xl p-lg shadow-elevation-2 h-full flex flex-col">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-tertiary-container animate-pulse">auto_awesome</span>
+<h3 class="font-title-lg text-title-lg text-on-surface font-semibold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">AI Insights</h3>
+</div>
+<div class="space-y-6 flex-1">
+<!-- Critical Prediction -->
+<div class="bg-white/60 rounded-lg p-4 border border-outline-variant/30 relative overflow-hidden group">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-error"></div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-error mt-0.5">warning</span>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface font-bold uppercase mb-1">Likely Stockout (3 Days)</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mb-2">Insulin Glargine consumption rate has spiked 40% in Sector 4. Current stock will deplete by Thursday.</p>
+<a href="../ai_health_predictions/code.html" class="text-primary font-medium text-sm flex items-center hover:underline">
+                                        Review Details <span class="material-symbols-outlined text-[16px] ml-1">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Suggested Transfer -->
+<div class="bg-white/60 rounded-lg p-4 border border-outline-variant/30 relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-secondary"></div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary mt-0.5">local_shipping</span>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface font-bold uppercase mb-1">Suggested Transfer</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mb-3">PHC-North has an excess of 600 vials of Insulin Glargine expiring in 6 months.</p>
+<div class="bg-surface-container rounded p-3 mb-3 text-sm flex justify-between items-center border border-outline-variant/20">
+<div>
+<span class="block text-xs text-on-surface-variant uppercase">From</span>
+<span class="font-medium text-on-surface">PHC-North</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">arrow_right_alt</span>
+<div class="text-right">
+<span class="block text-xs text-on-surface-variant uppercase">To</span>
+<span class="font-medium text-on-surface">Central Hub</span>
+</div>
+</div>
+<div id="transfer-action-container">
+<button onclick="authorizeTransfer(3, 'PHC-North', 'Central Hub', 200)" class="w-full bg-surface text-primary border border-primary px-4 py-2 rounded-lg font-label-md text-label-md hover:bg-primary hover:text-on-primary transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+                                        Authorize Transfer
+                                    </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-6 pt-4 border-t border-outline-variant/20 flex items-center text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-[14px] mr-1">update</span>
+                        Last updated 2 mins ago
+                    </div>
+</div>
+</div>
+</main>
+</div>
+<script>
+let inventoryData = [];
+
+async function loadInventory() {
+  try {
+    // 1. Fetch Inventory Data
+    const res = await fetch(`${API_BASE_URL}/api/inventory`);
+    inventoryData = await res.json();
+    
+    if (res.ok) {
+      renderInventoryTable();
+      updateInventoryStats();
+    }
+  } catch (error) {
+    console.error('Error fetching inventory:', error);
+  }
+}
+
+
+let currentPage = 1;
+const itemsPerPage = 5;
+
+function prevPage() {
+  if (currentPage > 1) {
+    currentPage--;
+    renderInventoryTable();
+  }
+}
+
+function nextPage() {
+  const query = document.getElementById('inventory-search').value.toLowerCase().trim();
+  const filtered = inventoryData.filter(item => item.name.toLowerCase().includes(query));
+  if (currentPage * itemsPerPage < filtered.length) {
+    currentPage++;
+    renderInventoryTable();
+  }
+}
+
+function renderInventoryTable() {
+  const query = document.getElementById('inventory-search').value.toLowerCase().trim();
+  const tableBody = document.getElementById('inventory-table-body');
+  tableBody.innerHTML = '';
+  
+  const filtered = inventoryData.filter(item => {
+    return item.name.toLowerCase().includes(query);
+  });
+
+  const totalItems = filtered.length;
+  const maxPage = Math.ceil(totalItems / itemsPerPage) || 1;
+  if (currentPage > maxPage) currentPage = maxPage;
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+  const currentItems = filtered.slice(startIndex, endIndex);
+
+  document.getElementById('pagination-info').textContent = `Showing ${totalItems === 0 ? 0 : startIndex + 1} to ${endIndex} of ${totalItems} entries`;
+  document.getElementById('prev-page').disabled = currentPage === 1;
+  document.getElementById('next-page').disabled = currentPage === maxPage;
+  
+  currentItems.forEach(item => {
+    let statusBadgeColor = 'bg-secondary-container text-on-secondary-container';
+    let levelColorClass = '';
+    
+    if (item.status === 'Critical') {
+      statusBadgeColor = 'bg-error-container text-on-error-container';
+      levelColorClass = 'font-bold text-error';
+    } else if (item.status === 'Low') {
+      statusBadgeColor = 'bg-[#fef08a] text-[#854d0e]';
+    }
+    
+    const rowHtml = `
+      <tr class="border-b border-surface-variant hover:bg-[rgba(0,106,99,0.02)] transition-colors cursor-pointer">
+        <td class="p-4 font-medium">${item.name}</td>
+        <td class="p-4 ${levelColorClass}">${item.stock_level.toLocaleString()} units</td>
+        <td class="p-4 text-on-surface-variant">${item.required_stock.toLocaleString()} units</td>
+        <td class="p-4 ${item.expiry_date.includes('Expiring') ? 'text-error font-medium' : ''}">${item.expiry_date}</td>
+        <td class="p-4">
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusBadgeColor}">
+            ${item.status}
+          </span>
+        </td>
+        <td class="p-4">
+          <button class="text-primary hover:text-primary-container"><span class="material-symbols-outlined text-[20px]">more_vert</span></button>
+        </td>
+      </tr>
+    `;
+    tableBody.insertAdjacentHTML('beforeend', rowHtml);
+  });
+}
+
+function updateInventoryStats() {
+  const criticalCount = inventoryData.filter(item => item.status === 'Critical').length;
+  const lowCount = inventoryData.filter(item => item.status === 'Low').length;
+  
+  document.getElementById('stat-critical-count').textContent = criticalCount + lowCount;
+}
+
+async function addStockPrompt() {
+  const choice = prompt("Enter Medicine ID to add stock:\n1: Paracetamol 500mg\n2: Amoxicillin 250mg\n3: Insulin Glargine 100IU/ml\n4: Metformin 500mg\n5: Azithromycin 500mg");
+  if (!choice) return;
+  
+  const id = parseInt(choice);
+  if (isNaN(id) || id < 1 || id > 5) {
+    alert("Invalid ID");
+    return;
+  }
+  
+  const amountStr = prompt("Enter quantity to add (units):", "1000");
+  const amount = parseInt(amountStr);
+  if (isNaN(amount) || amount <= 0) {
+    alert("Invalid amount");
+    return;
+  }
+  
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/inventory/add-stock`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, amount })
+    });
+    if (res.ok) {
+      loadInventory();
+    }
+  } catch (error) {
+    console.error('Error adding stock:', error);
+  }
+}
+
+async function authorizeTransfer(id, from, to, amount) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/inventory/transfer`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, from, to, amount })
+    });
+    const data = await res.json();
+    
+    if (res.ok && data.success) {
+      document.getElementById('transfer-action-container').innerHTML = `
+        <span class="w-full text-secondary font-semibold text-sm flex items-center justify-center gap-1 py-2">
+          <span class="material-symbols-outlined text-[18px]">check_circle</span> Authorized & Logged
+        </span>
+      `;
+      loadInventory();
+    }
+  } catch (error) {
+    console.error('Error authorizing transfer:', error);
+  }
+}
+
+// Add Search Event Listener
+document.getElementById('inventory-search').addEventListener('input', renderInventoryTable);
+
+// Initial load
+loadInventory();
+</script>
+
+<script>
+  let searchTimeout;
+  async function handleSearch(query) {
+    const resultsDiv = document.getElementById('search-results');
+    if (!query) {
+      resultsDiv.classList.add('hidden');
+      return;
+    }
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/hospitals/search?q=` + encodeURIComponent(query));
+        const data = await res.json();
+        if (data.length > 0) {
+          resultsDiv.innerHTML = data.map(h => `
+            <div class="p-3 border-b border-outline-variant/30 hover:bg-surface-container-low cursor-pointer">
+              <div class="font-bold text-sm">${h.name}</div>
+              <div class="text-xs text-on-surface-variant">${h.type} • ${h.current_patients} patients</div>
+            </div>
+          `).join('');
+        } else {
+          resultsDiv.innerHTML = '<div class="p-3 text-sm text-on-surface-variant">No results found</div>';
+        }
+        resultsDiv.classList.remove('hidden');
+      } catch (err) {
+        console.error(err);
+      }
+    }, 300);
+  }
+
+  async function toggleNotifications() {
+    const dropdown = document.getElementById('notifications-dropdown');
+    dropdown.classList.toggle('hidden');
+    if (!dropdown.classList.contains('hidden')) {
+      const list = document.getElementById('notifications-list');
+      list.innerHTML = '<div class="p-3 text-sm text-center">Loading...</div>';
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/notifications`);
+        const data = await res.json();
+        list.innerHTML = data.map(n => `
+          <div class="p-3 border-b border-outline-variant/30 hover:bg-surface-container-low cursor-pointer">
+            <div class="font-bold text-sm">${n.title} <span class="text-xs text-on-surface-variant ml-2">${n.time}</span></div>
+            <div class="text-xs text-on-surface-variant mt-1">${n.message}</div>
+          </div>
+        `).join('');
+      } catch (err) {
+        list.innerHTML = '<div class="p-3 text-sm text-error">Failed to load</div>';
+      }
+    }
+  }
+
+  function downloadExport() {
+    window.location.href = `${API_BASE_URL}/api/hospitals/export`;
+  }
+</script>
+
+</body></html>
