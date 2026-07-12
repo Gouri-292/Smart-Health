@@ -457,15 +457,15 @@ app.post('/api/ai/generate', async (req, res) => {
               properties: {
                 expected_patient_load: { type: Type.STRING },
                 patient_load_trend: { type: Type.STRING },
-                patient_confidence: { type: Type.STRING },
+                // patient_confidence: { type: Type.STRING },
                 disease_outbreak_risk: { type: Type.STRING },
                 disease_risk_trend: { type: Type.STRING },
-                disease_confidence: { type: Type.STRING },
+                // disease_confidence: { type: Type.STRING },
                 medicine_shortage_count: { type: Type.INTEGER },
                 medicine_shortage_trend: { type: Type.STRING },
-                medicine_confidence: { type: Type.STRING }
+                // medicine_confidence: { type: Type.STRING }
               },
-              required: ["expected_patient_load", "patient_load_trend", "patient_confidence", "disease_outbreak_risk", "disease_risk_trend", "disease_confidence", "medicine_shortage_count", "medicine_shortage_trend", "medicine_confidence"]
+              required: ["expected_patient_load", "patient_load_trend", "disease_outbreak_risk", "disease_risk_trend", "medicine_shortage_count", "medicine_shortage_trend"]
             },
             prescriptive_actions: {
               type: Type.ARRAY,
