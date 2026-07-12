@@ -1,6 +1,5 @@
 require('dotenv').config();
 console.log("Loaded API Key:", process.env.GEMINI_API_KEY ? "YES (starts with " + process.env.GEMINI_API_KEY.substring(0, 4) + ")" : "NO KEY FOUND");
-
 const express = require('express');
 const cors = require('cors');
 const { GoogleGenAI, Type, Schema } = require('@google/genai');
@@ -404,36 +403,12 @@ app.post('/api/ai/generate', async (req, res) => {
     const [queue] = await db.query('SELECT * FROM phc_queue');
     const [stats] = await db.query('SELECT * FROM dashboard_stats WHERE id = 1');
 
-    // Build a CONCISE summary instead of dumping full raw tables. This cuts
-    // the prompt size drastically (fewer tokens in -> faster generation),
-    // while keeping the specific, actionable details the model needs
-    // (low-stock item names, on-duty doctor names, queue pressure by dept).
-    const lowStockItems = inventory
-      .filter(i => i.stock_level < i.required_stock)
-      .sort((a, b) => (a.stock_level - a.required_stock) - (b.stock_level - b.required_stock))
-      .slice(0, 8)
-      .map(i => `${i.name} (${i.stock_level}/${i.required_stock} units, status: ${i.status})`);
-
-    const onDutyDoctors = staff
-      .filter(s => (s.role || '').toLowerCase().includes('doctor') && (s.status || '').toLowerCase() !== 'off duty')
-      .slice(0, 10)
-      .map(s => `${s.name} - ${s.department} (${s.status}, rating ${s.rating})`);
-
-    const queueByDept = {};
-    for (const q of queue) {
-      const dept = q.department || 'Unknown';
-      queueByDept[dept] = (queueByDept[dept] || 0) + 1;
-    }
-
     const context = `
-      Current Health Infrastructure Summary:
-      - Overall stats: ${JSON.stringify(stats[0])}
-      - Low-stock inventory items (top 8, worst first): ${lowStockItems.join('; ') || 'None critical'}
-      - Total inventory items tracked: ${inventory.length}
-      - On-duty doctors (sample, up to 10): ${onDutyDoctors.join('; ') || 'None currently on duty'}
-      - Total staff tracked: ${staff.length}
-      - Queue length by department: ${JSON.stringify(queueByDept)}
-      - Total patients currently in queue: ${queue.length}
+      Current Health Infrastructure State:
+      - Inventory: ${JSON.stringify(inventory)}
+      - Staff: ${JSON.stringify(staff)}
+      - Queue: ${JSON.stringify(queue)}
+      - Stats: ${JSON.stringify(stats[0])}
     `;
 
     const prompt = `
@@ -444,7 +419,7 @@ app.post('/api/ai/generate', async (req, res) => {
       Return the response in structured JSON.
     `;
 
-    const generateContentPromise = ai.models.generateContent({
+    const response = await ai.models.generateContent({
       model: 'gemini-3.5-flash',
       contents: prompt + "\\n" + context,
       config: {
@@ -457,15 +432,15 @@ app.post('/api/ai/generate', async (req, res) => {
               properties: {
                 expected_patient_load: { type: Type.STRING },
                 patient_load_trend: { type: Type.STRING },
-                // patient_confidence: { type: Type.STRING },
+                patient_confidence: { type: Type.STRING },
                 disease_outbreak_risk: { type: Type.STRING },
                 disease_risk_trend: { type: Type.STRING },
-                // disease_confidence: { type: Type.STRING },
+                disease_confidence: { type: Type.STRING },
                 medicine_shortage_count: { type: Type.INTEGER },
                 medicine_shortage_trend: { type: Type.STRING },
-                // medicine_confidence: { type: Type.STRING }
+                medicine_confidence: { type: Type.STRING }
               },
-              required: ["expected_patient_load", "patient_load_trend", "disease_outbreak_risk", "disease_risk_trend", "medicine_shortage_count", "medicine_shortage_trend"]
+              required: ["expected_patient_load", "patient_load_trend", "patient_confidence", "disease_outbreak_risk", "disease_risk_trend", "disease_confidence", "medicine_shortage_count", "medicine_shortage_trend", "medicine_confidence"]
             },
             prescriptive_actions: {
               type: Type.ARRAY,
@@ -484,15 +459,6 @@ app.post('/api/ai/generate', async (req, res) => {
         }
       }
     });
-
-    // Manual timeout: the @google/genai SDK's own httpOptions.timeout is
-    // known to be unreliable (googleapis/js-genai#1277), so if Gemini takes
-    // too long we fail fast with a clear message instead of hanging.
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Gemini request timed out after 45s')), 45000)
-    );
-
-    const response = await Promise.race([generateContentPromise, timeoutPromise]);
 
     const output = JSON.parse(response.text);
 
