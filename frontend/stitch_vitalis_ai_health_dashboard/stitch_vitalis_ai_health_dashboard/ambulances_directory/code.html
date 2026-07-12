@@ -158,6 +158,7 @@
             display: none;
         }
     </style>
+    <script src="/config.js"></script>
 </head>
 
 <body class="bg-background text-on-background font-body-md min-h-screen flex">
@@ -360,7 +361,7 @@
 
         async function loadAmbulances() {
             try {
-                const res = await fetch('https://smart-health-sbqq.onrender.com/api/ambulances');
+                const res = await fetch(`${API_BASE_URL}/api/ambulances`);
                 const ambulances = await res.json();
                 
                 updateMetrics(ambulances);
@@ -379,7 +380,7 @@
 
         async function loadTrips() {
             try {
-                const res = await fetch('https://smart-health-sbqq.onrender.com/api/ambulances/trips');
+                const res = await fetch(`${API_BASE_URL}/api/ambulances/trips`);
                 const trips = await res.json();
                 
                 const container = document.getElementById('timeline-container');
@@ -419,7 +420,7 @@
         }
 
         function setupSocket() {
-            const socket = io('https://smart-health-sbqq.onrender.com');
+            const socket = io(API_BASE_URL);
             
             socket.on('ambulance_location_update', (updates) => {
                 updates.forEach(update => {

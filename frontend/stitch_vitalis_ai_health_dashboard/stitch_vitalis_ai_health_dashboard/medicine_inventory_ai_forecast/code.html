@@ -132,6 +132,7 @@
         .shadow-elevation-1 { box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
         .shadow-elevation-2 { box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
     </style>
+    <script src="/config.js"></script>
 </head>
 <body class="bg-background text-on-surface font-body-md antialiased overflow-hidden flex h-screen">
 <!-- SideNavBar -->
@@ -355,7 +356,7 @@ let inventoryData = [];
 async function loadInventory() {
   try {
     // 1. Fetch Inventory Data
-    const res = await fetch('https://smart-health-sbqq.onrender.com/api/inventory');
+    const res = await fetch(`${API_BASE_URL}/api/inventory`);
     inventoryData = await res.json();
     
     if (res.ok) {
@@ -464,7 +465,7 @@ async function addStockPrompt() {
   }
   
   try {
-    const res = await fetch('https://smart-health-sbqq.onrender.com/api/inventory/add-stock', {
+    const res = await fetch(`${API_BASE_URL}/api/inventory/add-stock`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id, amount })
@@ -479,7 +480,7 @@ async function addStockPrompt() {
 
 async function authorizeTransfer(id, from, to, amount) {
   try {
-    const res = await fetch('https://smart-health-sbqq.onrender.com/api/inventory/transfer', {
+    const res = await fetch(`${API_BASE_URL}/api/inventory/transfer`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id, from, to, amount })
@@ -517,7 +518,7 @@ loadInventory();
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(async () => {
       try {
-        const res = await fetch('https://smart-health-sbqq.onrender.com/api/hospitals/search?q=' + encodeURIComponent(query));
+        const res = await fetch(`${API_BASE_URL}/api/hospitals/search?q=` + encodeURIComponent(query));
         const data = await res.json();
         if (data.length > 0) {
           resultsDiv.innerHTML = data.map(h => `
@@ -543,7 +544,7 @@ loadInventory();
       const list = document.getElementById('notifications-list');
       list.innerHTML = '<div class="p-3 text-sm text-center">Loading...</div>';
       try {
-        const res = await fetch('https://smart-health-sbqq.onrender.com/api/notifications');
+        const res = await fetch(`${API_BASE_URL}/api/notifications`);
         const data = await res.json();
         list.innerHTML = data.map(n => `
           <div class="p-3 border-b border-outline-variant/30 hover:bg-surface-container-low cursor-pointer">
@@ -558,7 +559,7 @@ loadInventory();
   }
 
   function downloadExport() {
-    window.location.href = 'https://smart-health-sbqq.onrender.com/api/hospitals/export';
+    window.location.href = `${API_BASE_URL}/api/hospitals/export`;
   }
 </script>
 

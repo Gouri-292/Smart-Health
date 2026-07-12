@@ -143,6 +143,7 @@
             }
         }
     </style>
+    <script src="/config.js"></script>
 </head>
 
 <body class="bg-background text-on-background font-body-md min-h-screen flex flex-col md:flex-row">
@@ -353,7 +354,7 @@
         async function loadPredictions() {
             try {
                 // 1. Load Stats values
-                const predRes = await fetch('https://smart-health-sbqq.onrender.com/api/predictions');
+                const predRes = await fetch(`${API_BASE_URL}/api/predictions`);
                 const pred = await predRes.json();
 
                 if (predRes.ok) {
@@ -371,7 +372,7 @@
                 }
 
                 // 2. Load Actions
-                const actionRes = await fetch('https://smart-health-sbqq.onrender.com/api/predictions/actions');
+                const actionRes = await fetch(`${API_BASE_URL}/api/predictions/actions`);
                 const actions = await actionRes.json();
 
                 if (actionRes.ok) {
@@ -417,7 +418,7 @@
 
         async function approveAction(id) {
             try {
-                const res = await fetch(`https://smart-health-sbqq.onrender.com/api/predictions/actions/${id}/approve`, {
+                const res = await fetch(`${API_BASE_URL}/api/predictions/actions/${id}/approve`, {
                     method: 'POST'
                 });
                 const data = await res.json();
@@ -437,7 +438,7 @@
             btn.disabled = true;
 
             try {
-                const res = await fetch('https://smart-health-sbqq.onrender.com/api/ai/generate', { method: 'POST' });
+                const res = await fetch(`${API_BASE_URL}/api/ai/generate`, { method: 'POST' });
                 const data = await res.json();
                 if (res.ok && data.success) {
                     loadPredictions();
@@ -468,7 +469,7 @@
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(async () => {
       try {
-        const res = await fetch('https://smart-health-sbqq.onrender.com/api/hospitals/search?q=' + encodeURIComponent(query));
+        const res = await fetch(`${API_BASE_URL}/api/hospitals/search?q=` + encodeURIComponent(query));
         const data = await res.json();
         if (data.length > 0) {
           resultsDiv.innerHTML = data.map(h => `
@@ -494,7 +495,7 @@
       const list = document.getElementById('notifications-list');
       list.innerHTML = '<div class="p-3 text-sm text-center">Loading...</div>';
       try {
-        const res = await fetch('https://smart-health-sbqq.onrender.com/api/notifications');
+        const res = await fetch(`${API_BASE_URL}/api/notifications`);
         const data = await res.json();
         list.innerHTML = data.map(n => `
           <div class="p-3 border-b border-outline-variant/30 hover:bg-surface-container-low cursor-pointer">
@@ -509,7 +510,7 @@
   }
 
   function downloadExport() {
-    window.location.href = 'https://smart-health-sbqq.onrender.com/api/hospitals/export';
+    window.location.href = `${API_BASE_URL}/api/hospitals/export`;
   }
 </script>
 

@@ -130,6 +130,7 @@
             border-radius: 9999px;
         }
     </style>
+    <script src="/config.js"></script>
 </head>
 <body class="bg-background text-on-background font-body-md min-h-screen flex">
 <!-- SideNavBar -->
@@ -489,7 +490,7 @@ setInterval(() => {
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(async () => {
       try {
-        const res = await fetch('https://smart-health-sbqq.onrender.com/api/hospitals/search?q=' + encodeURIComponent(query));
+        const res = await fetch(`${API_BASE_URL}/api/hospitals/search?q=` + encodeURIComponent(query));
         const data = await res.json();
         if (data.length > 0) {
           resultsDiv.innerHTML = data.map(h => `
@@ -515,7 +516,7 @@ setInterval(() => {
       const list = document.getElementById('notifications-list');
       list.innerHTML = '<div class="p-3 text-sm text-center">Loading...</div>';
       try {
-        const res = await fetch('https://smart-health-sbqq.onrender.com/api/notifications');
+        const res = await fetch(`${API_BASE_URL}/api/notifications`);
         const data = await res.json();
         list.innerHTML = data.map(n => `
           <div class="p-3 border-b border-outline-variant/30 hover:bg-surface-container-low cursor-pointer">
@@ -530,7 +531,7 @@ setInterval(() => {
   }
 
   function downloadExport() {
-    window.location.href = 'https://smart-health-sbqq.onrender.com/api/hospitals/export';
+    window.location.href = `${API_BASE_URL}/api/hospitals/export`;
   }
 </script>
 
